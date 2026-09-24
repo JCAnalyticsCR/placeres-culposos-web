@@ -284,6 +284,17 @@ html:has(.drawer[open]) { overflow: hidden; }
 .card[hidden] { display: none; }
 .card__media { height: 190px; overflow: hidden; background: var(--rosa); }
 .card__media img { width: 100%; height: 190px; object-fit: cover; }
+
+/* Producto sin foto propia: panda de la marca en vez de repetir otra foto. */
+.card--sin-foto .card__media {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+}
+.card--sin-foto .card__media img { width: auto; height: 60%; object-fit: contain; }
+.card__aviso {
+  font-weight: 700; font-size: 12px;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--magenta-oscuro);
+}
 .card__body { flex: 1; display: flex; flex-direction: column; gap: 6px; padding: 14px 16px 18px; }
 .card__name {
   margin: 0;
@@ -484,9 +495,15 @@ html:has(.drawer[open]) { overflow: hidden; }
 .fresas.is-live .cup-stage__disc { transition: transform var(--dur-fade); }
 .fresas.is-live .step { transition: opacity var(--dur-fade); }
 
-/* Vista fija: la sección mide ~3,5 pantallas; el bloque interior se queda
-   pegado bajo la barra de navegación mientras se recorre ese alto. */
-.fresas.is-pinned { height: 350svh; }
+/* Vista fija: el bloque interior (una pantalla menos la barra) se queda
+   pegado bajo la navegación mientras se recorre el alto sobrante de la
+   sección: 160 % de pantalla en escritorio y 110 % en teléfonos, donde la
+   escena no debe durar quince pulgares. El vaso se arma en el primer 78 %
+   de ese tramo (ANIM_FIN en app.js) y el resto lo deja quieto. */
+.fresas.is-pinned { height: calc(260svh - var(--nav-h)); }
+@media (max-width: 767.98px) {
+  .fresas.is-pinned { height: calc(210svh - var(--nav-h)); }
+}
 .fresas.is-pinned .fresas__pin {
   position: sticky; top: var(--nav-h);
   height: calc(100svh - var(--nav-h));
