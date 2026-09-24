@@ -284,6 +284,17 @@ html:has(.drawer[open]) { overflow: hidden; }
 .card[hidden] { display: none; }
 .card__media { height: 190px; overflow: hidden; background: var(--rosa); }
 .card__media img { width: 100%; height: 190px; object-fit: cover; }
+
+/* Producto sin foto propia: panda de la marca en vez de repetir otra foto. */
+.card--sin-foto .card__media {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+}
+.card--sin-foto .card__media img { width: auto; height: 60%; object-fit: contain; }
+.card__aviso {
+  font-weight: 700; font-size: 12px;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--magenta-oscuro);
+}
 .card__body { flex: 1; display: flex; flex-direction: column; gap: 6px; padding: 14px 16px 18px; }
 .card__name {
   margin: 0;
@@ -370,19 +381,27 @@ html:has(.drawer[open]) { overflow: hidden; }
 }
 .promo__tag p { margin: 0; font-size: 14px; }
 
-/* ---------- Fresas con crema: el vaso se arma con el scroll ----------
-   app.js escribe --s1 (fresas), --s2 (crema), --s3 (leche) entre 0 y 1.
-   El valor por defecto es 1: sin JS o con reduced-motion se ve el vaso
-   terminado. Las transiciones solo se encienden con .is-live, cuando JS
-   ya escribió el estado inicial (así no se ve el vaso vaciarse al cargar). */
+/* ---------- Fresas con crema: vista fija y vaso 3D ----------
+   El vaso es una secuencia de 61 cuadros renderizados en Blender
+   (tools/vaso-3d/). app.js pinta en el <canvas> el cuadro que toca según el
+   scroll y escribe --s1 (fresas), --s2 (crema) y --s3 (leche) entre 0 y 1.
+   El valor por defecto es 1: sin JS o con reduced-motion se ve la <img> del
+   vaso terminado. Con .is-pinned (lo pone app.js) la sección mide varias
+   pantallas y .fresas__pin queda fija (sticky) mientras el vaso se arma.
+   Las transiciones solo se encienden con .is-live, cuando JS ya escribió el
+   estado inicial (así no se ve nada vaciarse al cargar). */
 
 .fresas {
   --s1: 1; --s2: 1; --s3: 1;
+  position: relative;
+  background: var(--rosa); color: var(--petroleo);
+}
+
+.fresas__pin {
   display: grid; gap: 48px; align-items: center;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
   padding: 96px var(--gutter);
-  overflow: hidden;
-  background: var(--rosa); color: var(--petroleo);
+  overflow: clip;
 }
 
 .fresas__copy { display: flex; flex-direction: column; gap: 20px; }
@@ -410,151 +429,129 @@ html:has(.drawer[open]) { overflow: hidden; }
 }
 .step--2 .step__num { background: var(--petroleo); }
 .step--3 .step__num { background: var(--amarillo); color: var(--petroleo); }
-.step--1 { opacity: var(--s1); }
-.step--2 { opacity: var(--s2); }
-.step--3 { opacity: var(--s3); }
+/* Los pasos que faltan se ven tenues (nunca invisibles: son contenido). */
+.step--1 { opacity: calc(.3 + .7 * var(--s1)); }
+.step--2 { opacity: calc(.3 + .7 * var(--s2)); }
+.step--3 { opacity: calc(.3 + .7 * var(--s3)); }
 
 .fresas__buy { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
 .price-big { font-family: var(--font-display); font-size: 40px; color: var(--magenta); }
 
+/* Escenario: el cuadro 4:5 se encaja (contain) en el espacio disponible.
+   --fw/--fh son el ancho y alto del cuadro pintado; el disco y las
+   etiquetas se ubican relativos a él para acompañar al vaso en cualquier
+   tamaño. */
 .cup-stage {
-  position: relative; height: 520px;
-  display: flex; justify-content: center; align-items: flex-end;
+  position: relative; height: 560px; min-height: 0;
+  container-type: size;
+}
+.cup-stage > * {
+  --fw: min(100cqw, 80cqh);
+  --fh: calc(var(--fw) * 1.25);
 }
 
 .cup-stage__disc {
-  position: absolute; left: 50%; bottom: 20px;
-  width: 420px; height: 420px; border-radius: 50%;
+  position: absolute; left: 50%; top: calc(50% + var(--fh) * .04);
+  width: calc(var(--fw) * .8); aspect-ratio: 1; border-radius: 50%;
   background: var(--blanco);
-  transform: translateX(-50%) scale(calc(.6 + .4 * var(--s1)));
+  transform: translate(-50%, -50%) scale(calc(.6 + .4 * var(--s1)));
 }
 
-.ing {
-  position: absolute;
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
+.cup-stage__img,
+.cup-stage__canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+}
+.cup-stage__canvas { display: none; }
+.fresas.has-seq .cup-stage__canvas { display: block; }
+.fresas.has-seq .cup-stage__img { display: none; }
+
+.tag {
+  position: absolute; z-index: 1;
+  padding: 8px 12px;
+  background: var(--blanco); color: var(--petroleo);
   font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .1em;
+  white-space: nowrap;
+  box-shadow: var(--sombra-boton);
 }
-.ing--fresa {
-  left: 8%; top: 60px; opacity: var(--s1);
-  transform: translate(calc((1 - var(--s1)) * -160px), calc((1 - var(--s1)) * -60px))
-             rotate(calc((1 - var(--s1)) * -40deg));
-}
-.ing--crema {
-  left: 50%; top: 0; opacity: var(--s2);
-  transform: translate(-50%, calc((1 - var(--s2)) * -140px)) scale(calc(.6 + .4 * var(--s2)));
-}
-.ing--leche {
-  right: 8%; top: 80px; opacity: var(--s3);
-  transform: translate(calc((1 - var(--s3)) * 160px), calc((1 - var(--s3)) * -60px))
-             rotate(calc((1 - var(--s3)) * 40deg));
-}
-
-.ing__fresa {
-  position: relative; width: 58px; height: 66px;
-  background: var(--magenta);
-  border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
-  box-shadow: inset -8px -8px 0 var(--magenta-oscuro);
-}
-.ing__fresa::before {
-  content: ""; position: absolute; top: -10px; left: 18px;
-  width: 22px; height: 16px; border-radius: 50% 50% 0 0;
-  background: var(--turquesa);
-}
-.ing__crema {
-  width: 70px; height: 56px;
-  background: var(--blanco); border: 4px solid var(--petroleo);
-  border-radius: 50% 50% 40% 40%;
-}
-.ing__leche {
-  position: relative; width: 48px; height: 66px;
-  background: var(--amarillo); border: 4px solid var(--petroleo); border-radius: 8px;
-}
-.ing__leche::before {
-  content: ""; position: absolute; left: 6px; right: 6px; top: 18px; height: 22px;
-  background: var(--petroleo); border-radius: 3px;
-}
-
-.cup {
-  position: relative; width: 240px; height: 340px; margin-bottom: 30px;
-  transform: translateY(calc((1 - var(--s1)) * 40px));
-}
-
-.cup__glass {
-  position: absolute; inset: 0; overflow: hidden;
-  contain: layout paint;
-  clip-path: polygon(6% 0, 94% 0, 84% 100%, 16% 100%);
-  background: rgba(255, 255, 255, .55);
-  border: 4px solid var(--petroleo);
-}
-
-.cup__fill {
-  position: absolute; left: 0; right: 0; bottom: 0;
-  height: calc(var(--s1) * 78%);
-  background: var(--rosa-relleno);
-}
-
-.berry {
-  position: absolute;
-  background: var(--magenta);
-  border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
-  box-shadow: inset -6px -6px 0 var(--magenta-oscuro);
-}
-.b1 { left: 14%; bottom: 10%; width: 52px; height: 56px; transform: rotate(-20deg); }
-.b2 { left: 52%; bottom: 6%;  width: 56px; height: 60px; transform: rotate(25deg); }
-.b3 { left: 30%; bottom: 38%; width: 50px; height: 54px; transform: rotate(10deg); }
-.b4 { left: 66%; bottom: 44%; width: 46px; height: 50px; transform: rotate(-35deg); }
-.b5 { left: 8%;  bottom: 66%; width: 50px; height: 54px; transform: rotate(40deg); }
-
-.cup__cream {
-  position: absolute; left: 0; right: 0; top: 0;
-  height: calc(var(--s2) * 30%);
-  background: var(--blanco);
-  border-radius: 0 0 40% 60% / 0 0 100% 100%;
-}
-
-.cup__milk { position: absolute; top: 0; background: var(--amarillo); border-radius: 0 0 8px 8px; }
-.m1 { left: 38%; width: 14px; height: calc(var(--s3) * 70%); }
-.m2 { left: 60%; width: 10px; height: calc(var(--s3) * 50%); }
-
-.cup__top {
-  position: absolute; left: 50%; top: -90px;
-  display: flex; flex-direction: column; align-items: center;
-  transform: translateX(-50%) scale(var(--s2));
-  transform-origin: 50% 100%;
-}
-.cup__top span { position: relative; background: var(--blanco); border: 4px solid var(--petroleo); }
-.cup__top .t1 { z-index: 3; width: 60px;  height: 44px; margin-bottom: -14px; border-radius: 50% 50% 45% 45%; }
-.cup__top .t2 { z-index: 2; width: 120px; height: 52px; margin-bottom: -18px; border-radius: 50%; }
-.cup__top .t3 { z-index: 1; width: 190px; height: 60px; border-radius: 50%; }
-.cup__top .t-berry {
-  position: absolute; z-index: 4; top: -30px; left: 50%;
-  width: 40px; height: 44px; margin-left: -20px;
-  background: var(--magenta);
-  border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
-  box-shadow: inset -6px -6px 0 var(--magenta-oscuro);
-}
-
-.cup__logo {
-  position: absolute; left: 50%; top: 52%;
-  width: 84px; height: 84px; margin-left: -42px;
+.tag--fresa {
+  left: max(0px, calc(50% - var(--fw) * .48)); top: calc(50% + var(--fh) * .2);
   opacity: var(--s1);
+  transform: translateX(calc((1 - var(--s1)) * -32px)) rotate(-4deg);
+}
+.tag--crema {
+  right: max(0px, calc(50% - var(--fw) * .44)); top: calc(50% - var(--fh) * .18);
+  opacity: var(--s2);
+  transform: translateX(calc((1 - var(--s2)) * 32px)) rotate(3deg);
+}
+.tag--leche {
+  left: max(0px, calc(50% - var(--fw) * .46)); top: calc(50% - var(--fh) * .26);
+  opacity: var(--s3);
+  transform: translateX(calc((1 - var(--s3)) * -32px)) rotate(-2deg);
 }
 
-.fresas.is-live .cup__fill,
-.fresas.is-live .cup__cream,
-.fresas.is-live .cup__milk { transition: height var(--dur-build) var(--ease-build); }
-.fresas.is-live .ing { transition: transform var(--dur-build) var(--ease-build), opacity var(--dur-fade); }
-.fresas.is-live .cup__top { transition: transform var(--dur-build) var(--ease-build); }
+.fresas.is-live .tag { transition: transform var(--dur-build) var(--ease-build), opacity var(--dur-fade); }
 .fresas.is-live .cup-stage__disc { transition: transform var(--dur-fade); }
-.fresas.is-live .step,
-.fresas.is-live .cup__logo { transition: opacity var(--dur-fade); }
+.fresas.is-live .step { transition: opacity var(--dur-fade); }
 
-/* Teléfonos angostos: el escenario del vaso (disco de 420px) se escala
-   entero desde la base para no recortar los ingredientes contra el borde. */
+/* Vista fija: el bloque interior (una pantalla menos la barra) se queda
+   pegado bajo la navegación mientras se recorre el alto sobrante de la
+   sección: 160 % de pantalla en escritorio y 110 % en teléfonos, donde la
+   escena no debe durar quince pulgares. El vaso se arma en el primer 78 %
+   de ese tramo (ANIM_FIN en app.js) y el resto lo deja quieto. */
+.fresas.is-pinned { height: calc(260svh - var(--nav-h)); }
+@media (max-width: 767.98px) {
+  .fresas.is-pinned { height: calc(210svh - var(--nav-h)); }
+}
+.fresas.is-pinned .fresas__pin {
+  position: sticky; top: var(--nav-h);
+  height: calc(100svh - var(--nav-h));
+  padding-block: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+}
+.fresas.is-pinned .fresas__title { font-size: clamp(52px, min(7vw, 11svh), 96px); }
+.fresas.is-pinned .cup-stage { height: 100%; align-self: stretch; }
+
+/* Teléfono con vista fija: título arriba, vaso al centro y pasos en fila
+   abajo, todo en una pantalla. El párrafo queda para lectores de pantalla
+   (los pasos dicen lo mismo). El margen de abajo deja libre el botón
+   flotante de WhatsApp. */
+@media (max-width: 859.98px) {
+  .fresas.is-pinned .fresas__pin {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+    align-items: stretch; gap: 12px;
+    padding-top: 16px;
+    padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  }
+  .fresas.is-pinned .fresas__copy { display: contents; }
+  .fresas.is-pinned .kicker { order: 0; }
+  .fresas.is-pinned .fresas__title { order: 1; font-size: clamp(34px, 6svh, 56px); text-shadow: 3px 3px 0 var(--blanco); }
+  .fresas.is-pinned .cup-stage { order: 2; height: auto; }
+  .fresas.is-pinned .steps { order: 3; flex-direction: row; gap: 8px; margin: 0; }
+  .fresas.is-pinned .fresas__buy { order: 4; margin: 0; }
+  .fresas.is-pinned .fresas__lead {
+    position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .fresas.is-pinned .step { flex: 1; gap: 8px; min-width: 0; }
+  .fresas.is-pinned .step__num { width: 32px; height: 32px; font-size: 16px; }
+  .fresas.is-pinned .step b { font-size: 13px; line-height: 1.2; }
+  .fresas.is-pinned .step div span { display: none; }
+  .fresas.is-pinned .price-big { font-size: 32px; }
+  .fresas.is-pinned .tag { padding: 6px 9px; font-size: 10px; }
+}
+
+/* Sin vista fija en teléfonos: escenario un poco más bajo. */
 @media (max-width: 420px) {
-  .cup-stage { scale: .86; transform-origin: 50% 100%; margin-top: -60px; }
-  /* "Leche cond." no cabe al lado del copete: sube a la esquina. */
-  .ing--leche { right: 0; top: 0; }
+  .cup-stage { height: 480px; }
+}
+
+/* Con "reducir movimiento" se ve siempre la foto del vaso terminado. */
+@media (prefers-reduced-motion: reduce) {
+  .fresas.has-seq .cup-stage__img { display: block; }
+  .fresas.has-seq .cup-stage__canvas { display: none; }
 }
 
 /* ---------- TikTok ---------- */
@@ -653,8 +650,14 @@ html:has(.drawer[open]) { overflow: hidden; }
   border-radius: 14px 14px 4px 14px;
   box-shadow: var(--sombra-boton);
 }
+/* En la vista fija del vaso la burbuja taparía el vaso y, en teléfonos,
+   el panda taparía los pasos: se hacen a un lado. */
+.panda__bubble { transition: opacity var(--dur-fade); }
+.panda.is-away .panda__bubble { opacity: 0; }
 @media (max-width: 859.98px) {
   .panda__bubble { display: none; }
+  .panda { transition: transform var(--dur-micro) ease-out, opacity var(--dur-fade); }
+  .panda.is-away { opacity: 0; }
 }
 
 @keyframes flotar {

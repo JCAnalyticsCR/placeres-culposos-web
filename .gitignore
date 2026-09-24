@@ -24,5 +24,10 @@ design/
 *.pptx
 *.zip
 
+# Renders de Blender (se regeneran con tools/vaso-3d/vaso.py). La escena
+# tools/vaso-3d/vaso.blend sí se versiona para abrirla directo en Blender.
+render/
+*.blend1
+
 # Notas internas del proyecto
 notas-internas/

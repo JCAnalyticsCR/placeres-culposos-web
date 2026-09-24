@@ -22,8 +22,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=20260924a">
-<script src="js/app.js?v=20260924a" defer></script>
+<link rel="stylesheet" href="css/styles.css?v=20260924d">
+<script src="js/app.js?v=20260924d" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -177,8 +177,10 @@
   </div>
 </section>
 
-<!-- FRESAS CON CREMA: el vaso se arma con el scroll -->
+<!-- FRESAS CON CREMA: la vista queda fija y el vaso 3D se arma con el scroll.
+     Cuadros renderizados en Blender: tools/vaso-3d/ -->
 <section id="fresas" class="fresas" aria-labelledby="fresas-titulo">
+  <div class="fresas__pin">
   <div class="fresas__copy">
     <p class="kicker kicker--pink">La estrella de la casa</p>
     <h2 class="fresas__title" id="fresas-titulo">Fresas<br>con crema</h2>
@@ -194,26 +196,19 @@
     </div>
   </div>
 
+  <!-- Sin JS o con "reducir movimiento" se ve la foto del vaso terminado (<img>);
+       con JS, el <canvas> pinta el cuadro que corresponde al scroll. -->
   <div class="cup-stage" aria-hidden="true">
     <div class="cup-stage__disc"></div>
-    <div class="ing ing--fresa"><div class="ing__fresa"></div><span>Fresas</span></div>
-    <div class="ing ing--crema"><div class="ing__crema"></div><span>Crema</span></div>
-    <div class="ing ing--leche"><div class="ing__leche"></div><span>Leche cond.</span></div>
-    <div class="cup">
-      <div class="cup__glass">
-        <div class="cup__fill">
-          <span class="berry b1"></span><span class="berry b2"></span><span class="berry b3"></span>
-          <span class="berry b4"></span><span class="berry b5"></span>
-        </div>
-        <div class="cup__cream"></div>
-        <div class="cup__milk m1"></div>
-        <div class="cup__milk m2"></div>
-      </div>
-      <div class="cup__top">
-        <span class="t1"></span><span class="t2"></span><span class="t3"></span><span class="t-berry"></span>
-      </div>
-      <img class="cup__logo" src="img/logo.webp" width="84" height="84" alt="" loading="lazy" decoding="async">
-    </div>
+    <img class="cup-stage__img" src="img/vaso/g/60.webp"
+         srcset="img/vaso/c/60.webp 480w, img/vaso/g/60.webp 800w"
+         sizes="(max-width: 600px) 80vw, 520px"
+         width="800" height="1000" alt="" loading="lazy" decoding="async">
+    <canvas class="cup-stage__canvas" width="800" height="1000"></canvas>
+    <span class="tag tag--fresa">Fresas</span>
+    <span class="tag tag--crema">Crema</span>
+    <span class="tag tag--leche">Leche cond.</span>
+  </div>
   </div>
 </section>
 
@@ -226,9 +221,10 @@
     <a class="btn btn--white" href="https://www.tiktok.com/@placeresculpososcr" target="_blank" rel="noopener">Seguir en TikTok</a>
   </div>
   <div class="tiktok__grid">
-    <img src="img/pc_01.webp" width="640" height="1136" alt="Fresas Dubái con pistacho y chocolate" loading="lazy" decoding="async">
+    <!-- Cuadros de videos de TikTok: decorativos, el texto de al lado dice lo importante. -->
+    <img src="img/pc_01.webp" width="640" height="1136" alt="" loading="lazy" decoding="async">
     <img src="img/pc_02.webp" width="640" height="1136" alt="" loading="lazy" decoding="async">
-    <img src="img/pc_18.webp" width="640" height="1136" alt="" loading="lazy" decoding="async">
+    <img src="img/pc_08.webp" width="640" height="1138" alt="Mamá e hijo compartiendo fresas con crema" loading="lazy" decoding="async">
   </div>
 </section>
 

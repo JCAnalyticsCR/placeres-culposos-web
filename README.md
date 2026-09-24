@@ -20,7 +20,9 @@ formularios: los pedidos se hacen por WhatsApp.
 | `css/styles.css` | Estilos, tokens de color y las duraciones de movimiento (`--dur-*`) |
 | `js/app.js` | Datos del menú (`MENU`), filtro, menú móvil, carrusel de promos y animaciones por scroll |
 | `img/` | Fotos optimizadas en WebP, logo, stickers del panda, favicon e imagen para compartir (`og.jpg`) |
+| `img/vaso/` | Secuencia del vaso 3D: `g/` 800x1000 y `c/` 480x600, cuadros `00`-`60` |
 | `tools/optimizar-imagenes.py` | Regenera `img/` a partir de las fotos originales |
+| `tools/vaso-3d/` | Escena de Blender del vaso (`vaso.py`) y exportador de la secuencia (`exportar.py`) |
 
 ## Correr en local
 
@@ -42,10 +44,17 @@ Editar el arreglo `MENU` al inicio de `js/app.js`. Cada producto lleva
 `name`, `desc`, `price`, `img` (nombre del archivo en `img/` sin extensión)
 y `pos` (encuadre de la foto, `object-position`).
 
+Si un producto no tiene foto propia, `img: null`: la tarjeta muestra el panda
+con "Foto pronto". Mejor eso que repetir la foto de otro producto. Hoy están
+así Mango, Matcha, Café con leche, Capuchino, Chocolate caliente, Frozen Chai
+y Dim sum; Fresas Dubái usa el afiche general de fresas (`pc_22`).
+
 ## Cambiar o agregar fotos
 
-1. Poner el original en la carpeta de originales (fuera del repo).
-2. Agregarlo al diccionario `FOTOS` de `tools/optimizar-imagenes.py` con su ancho máximo.
+1. Poner el original en la carpeta de originales (fuera del repo): la carpeta
+   `assets/` del handoff de diseño, que además tiene el logo y los pandas.
+2. Agregarlo al diccionario `FOTOS` de `tools/optimizar-imagenes.py` con su
+   ancho máximo, o a `RECORTES` si la tarjeta necesita solo una parte del afiche.
 3. Correr:
 
 ```bash
@@ -63,12 +72,49 @@ Safari en iPhone, no mezclen la página nueva con archivos viejos guardados.
 
 ## Movimiento
 
-- El vaso de fresas se arma con el scroll: `app.js` calcula el progreso de
-  la sección y escribe `--s1`, `--s2` y `--s3`; todo lo demás es CSS.
+- Sección de fresas: la vista queda fija (sticky) mientras se hace scroll y
+  el vaso 3D se arma en tres pasos (fresas, crema, leche condensada).
+  El tramo fijo es 160 % de pantalla en escritorio y 110 % en teléfonos; el
+  vaso termina al 78 % (`ANIM_FIN`) y el resto lo deja quieto antes de soltar.
+  Un bucle con lerp (0,09 PC / 0,08 táctil) suaviza el scroll y el `<canvas>`
+  mezcla los dos cuadros vecinos; los pasos, las etiquetas y el disco
+  (`--s1`, `--s2`, `--s3`) leen ese mismo valor suavizado.
+- Los cuadros se descargan cuando la sección se acerca: `img/vaso/g`
+  (800x1000, 1,75 MB) si el vaso se pinta a más de 520 px reales
+  (densidad tope 2, así que también la mayoría de los teléfonos) y
+  `img/vaso/c` (480x600, 0,87 MB) en pantallas chicas. Con "ahorro de datos"
+  no se descargan y se ve la foto del vaso terminado.
+- La vista fija necesita al menos 600 px de alto; en teléfonos acostados el
+  vaso se arma igual, pero sin fijar la sección.
 - Parallax del hero solo en pantallas de 768 px o más.
-- Con "reducir movimiento" activado no hay parallax, el panda no se mueve y
-  el vaso aparece terminado.
+- Con "reducir movimiento" activado no hay parallax, el panda no se mueve,
+  la sección no se fija y el vaso aparece terminado.
 - Sin JavaScript el contenido se ve completo (el vaso aparece terminado).
+
+## Vaso 3D (Blender)
+
+El vaso se modela y renderiza por código en `tools/vaso-3d/vaso.py`: vaso
+PET con labio, sticker con `img/logo.webp`, mitades de fresa con semillas y
+corte, crema, copete de crema batida, leche condensada y la fresa de arriba.
+Las mitades caen con física real (Bullet); su posición final queda guardada
+en `tools/vaso-3d/reposo.json` para que cada render dé el mismo vaso.
+
+Funciona con Blender 4.2 y 5.x. La secuencia publicada y `vaso.blend` salen
+de 4.2 (el .blend abre en las dos; si se vuelve a guardar con `--blend`
+desde 5.x, ya no abre en 4.2). Para regenerar la
+secuencia (unos 50 min con CPU en una laptop de 6 núcleos):
+
+```bash
+blender -b -P tools/vaso-3d/vaso.py -- --out render --blend tools/vaso-3d/vaso.blend
+python tools/vaso-3d/exportar.py render
+```
+
+`tools/vaso-3d/vaso.blend` es la escena ya armada (con el logo empacado)
+para abrirla y retocarla en Blender; `--blend` la vuelve a guardar. Para probar
+cambios rápido: `--frames 0,120,240 --samples 24 --scale 50`. Los tiempos
+de cada paso están en las constantes `F_*` de `vaso.py`; si cambian,
+actualizar los tramos de `escribirPasos()` en `app.js`. `render/` no se
+versiona.
 
 ## Pendientes antes de lanzar
 
