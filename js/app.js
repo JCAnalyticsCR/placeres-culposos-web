@@ -273,9 +273,10 @@ function crearSecuencia(fresas, alProgreso) {
   function empezar() {
     if (empezada) return;
     empezada = true;
-    // Tamaño del cuadro pintado en píxeles reales: >520 px pide los de 800x1000.
+    // Tamaño del cuadro pintado en píxeles reales (densidad tope 2: más no se
+    // nota en una foto): >520 px pide los de 800x1000.
     const ancho = Math.min(escenario.clientWidth, escenario.clientHeight * 0.8);
-    carpeta = ancho * (window.devicePixelRatio || 1) > 520 ? 'g' : 'c';
+    carpeta = ancho * Math.min(window.devicePixelRatio || 1, 2) > 520 ? 'g' : 'c';
     if (carpeta === 'c') {
       canvas.width = 480;
       canvas.height = 600;

@@ -79,8 +79,10 @@ Safari en iPhone, no mezclen la página nueva con archivos viejos guardados.
   Un bucle con lerp (0,09 PC / 0,08 táctil) suaviza el scroll y el `<canvas>`
   mezcla los dos cuadros vecinos; los pasos, las etiquetas y el disco
   (`--s1`, `--s2`, `--s3`) leen ese mismo valor suavizado.
-- Los cuadros se descargan cuando la sección se acerca (unos 2 MB en
-  pantallas grandes, menos de 1 MB en teléfonos). Con "ahorro de datos"
+- Los cuadros se descargan cuando la sección se acerca: `img/vaso/g`
+  (800x1000, 1,75 MB) si el vaso se pinta a más de 520 px reales
+  (densidad tope 2, así que también la mayoría de los teléfonos) y
+  `img/vaso/c` (480x600, 0,87 MB) en pantallas chicas. Con "ahorro de datos"
   no se descargan y se ve la foto del vaso terminado.
 - La vista fija necesita al menos 600 px de alto; en teléfonos acostados el
   vaso se arma igual, pero sin fijar la sección.
@@ -97,8 +99,9 @@ corte, crema, copete de crema batida, leche condensada y la fresa de arriba.
 Las mitades caen con física real (Bullet); su posición final queda guardada
 en `tools/vaso-3d/reposo.json` para que cada render dé el mismo vaso.
 
-Funciona con Blender 4.2 y 5.x (la secuencia publicada se renderizó con
-5.2; `vaso.blend` guardado con 5.2 no abre en 4.x). Para regenerar la
+Funciona con Blender 4.2 y 5.x. La secuencia publicada y `vaso.blend` salen
+de 4.2 (el .blend abre en las dos; si se vuelve a guardar con `--blend`
+desde 5.x, ya no abre en 4.2). Para regenerar la
 secuencia (unos 50 min con CPU en una laptop de 6 núcleos):
 
 ```bash
@@ -110,7 +113,7 @@ python tools/vaso-3d/exportar.py render
 para abrirla y retocarla en Blender; `--blend` la vuelve a guardar. Para probar
 cambios rápido: `--frames 0,120,240 --samples 24 --scale 50`. Los tiempos
 de cada paso están en las constantes `F_*` de `vaso.py`; si cambian,
-actualizar los tramos de `escribirVaso()` en `app.js`. `render/` no se
+actualizar los tramos de `escribirPasos()` en `app.js`. `render/` no se
 versiona.
 
 ## Pendientes antes de lanzar
