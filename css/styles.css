@@ -460,7 +460,7 @@ html:has(.drawer[open]) { overflow: hidden; }
 .promo__tag p { margin: 0; font-size: 14px; }
 
 /* ---------- Fresas con crema: vista fija y vaso 3D ----------
-   El vaso es una secuencia de 61 cuadros renderizados en Blender
+   El vaso es una secuencia de 81 cuadros renderizados en Blender
    (tools/vaso-3d/). app.js pinta en el <canvas> el cuadro que toca según el
    scroll y escribe --s1 (fresas), --s2 (crema) y --s3 (leche) entre 0 y 1.
    El valor por defecto es 1: sin JS o con reduced-motion se ve la <img> del

@@ -20,7 +20,7 @@ formularios: los pedidos se hacen por WhatsApp.
 | `css/styles.css` | Estilos, tokens de color y las duraciones de movimiento (`--dur-*`) |
 | `js/app.js` | Datos del menú (`MENU`), filtro, menú móvil, carrusel de promos y animaciones por scroll |
 | `img/` | Fotos optimizadas en WebP, logo, stickers del panda, favicon e imagen para compartir (`og.jpg`) |
-| `img/vaso/` | Secuencia del vaso 3D: `g/` 800x1000 y `c/` 480x600, cuadros `00`-`60` |
+| `img/vaso/` | Secuencia del vaso 3D: `g/` 1000x1250 y `c/` 600x750, cuadros `00`-`80` |
 | `tools/optimizar-imagenes.py` | Regenera `img/` a partir de las fotos originales |
 | `tools/vaso-3d/` | Escena de Blender del vaso (`vaso.py`) y exportador de la secuencia (`exportar.py`) |
 
@@ -82,9 +82,9 @@ Safari en iPhone, no mezclen la página nueva con archivos viejos guardados.
   mezcla los dos cuadros vecinos; los pasos, las etiquetas y el disco
   (`--s1`, `--s2`, `--s3`) leen ese mismo valor suavizado.
 - Los cuadros se descargan cuando la sección se acerca: `img/vaso/g`
-  (800x1000, 1,75 MB) si el vaso se pinta a más de 520 px reales
+  (1000x1250, 3,1 MB) si el vaso se pinta a más de 600 px reales
   (densidad tope 2, así que también la mayoría de los teléfonos) y
-  `img/vaso/c` (480x600, 0,87 MB) en pantallas chicas. Con "ahorro de datos"
+  `img/vaso/c` (600x750, 1,5 MB) en pantallas chicas. Con "ahorro de datos"
   no se descargan y se ve la foto del vaso terminado.
 - La vista fija necesita al menos 600 px de alto; en teléfonos acostados el
   vaso se arma igual, pero sin fijar la sección.
@@ -101,10 +101,11 @@ corte, crema, copete de crema batida, leche condensada y la fresa de arriba.
 Las mitades caen con física real (Bullet); su posición final queda guardada
 en `tools/vaso-3d/reposo.json` para que cada render dé el mismo vaso.
 
-Funciona con Blender 4.2 y 5.x. La secuencia publicada y `vaso.blend` salen
-de 4.2 (el .blend abre en las dos; si se vuelve a guardar con `--blend`
-desde 5.x, ya no abre en 4.2). Para regenerar la
-secuencia (unos 50 min con CPU en una laptop de 6 núcleos):
+Funciona con Blender 4.2 y 5.x. La secuencia publicada (81 cuadros a
+1000x1250, 64 muestras, con profundidad de campo) se renderizó con 5.2;
+`vaso.blend` está guardado con 4.2 y abre en las dos (si se vuelve a guardar
+con `--blend` desde 5.x, ya no abre en 4.2). Para regenerar la secuencia
+(unas 2 horas con CPU en una laptop de 6 núcleos):
 
 ```bash
 blender -b -P tools/vaso-3d/vaso.py -- --out render --blend tools/vaso-3d/vaso.blend

@@ -53,8 +53,8 @@ const sinHover = window.matchMedia('(hover: none)');
 // La vista fija del vaso necesita alto: en teléfonos acostados no se fija.
 const puedeFijar = window.matchMedia('(min-height: 600px)');
 
-/* Vaso 3D: cuadros en img/vaso/{g,c}/00-60.webp (tools/vaso-3d/exportar.py). */
-const VASO_CUADROS = 61;
+/* Vaso 3D: cuadros en img/vaso/{g,c}/00-80.webp (tools/vaso-3d/exportar.py). */
+const VASO_CUADROS = 81;
 // Con vista fija, el vaso termina de armarse en este punto del tramo.
 const ANIM_FIN = 0.78;
 
@@ -301,12 +301,12 @@ function crearSecuencia(fresas, alProgreso) {
     if (empezada) return;
     empezada = true;
     // Tamaño del cuadro pintado en píxeles reales (densidad tope 2: más no se
-    // nota en una foto): >520 px pide los de 800x1000.
+    // nota en una foto): >600 px pide los de 1000x1250, si no los de 600x750.
     const ancho = Math.min(escenario.clientWidth, escenario.clientHeight * 0.8);
-    carpeta = ancho * Math.min(window.devicePixelRatio || 1, 2) > 520 ? 'g' : 'c';
+    carpeta = ancho * Math.min(window.devicePixelRatio || 1, 2) > 600 ? 'g' : 'c';
     if (carpeta === 'c') {
-      canvas.width = 480;
-      canvas.height = 600;
+      canvas.width = 600;
+      canvas.height = 750;
     }
     const cola = orden();
     let enVuelo = 0;
