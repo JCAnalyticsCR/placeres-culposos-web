@@ -44,10 +44,17 @@ Editar el arreglo `MENU` al inicio de `js/app.js`. Cada producto lleva
 `name`, `desc`, `price`, `img` (nombre del archivo en `img/` sin extensión)
 y `pos` (encuadre de la foto, `object-position`).
 
+Si un producto no tiene foto propia, `img: null`: la tarjeta muestra el panda
+con "Foto pronto". Mejor eso que repetir la foto de otro producto. Hoy están
+así Mango, Matcha, Café con leche, Capuchino, Chocolate caliente, Frozen Chai
+y Dim sum; Fresas Dubái usa el afiche general de fresas (`pc_22`).
+
 ## Cambiar o agregar fotos
 
-1. Poner el original en la carpeta de originales (fuera del repo).
-2. Agregarlo al diccionario `FOTOS` de `tools/optimizar-imagenes.py` con su ancho máximo.
+1. Poner el original en la carpeta de originales (fuera del repo): la carpeta
+   `assets/` del handoff de diseño, que además tiene el logo y los pandas.
+2. Agregarlo al diccionario `FOTOS` de `tools/optimizar-imagenes.py` con su
+   ancho máximo, o a `RECORTES` si la tarjeta necesita solo una parte del afiche.
 3. Correr:
 
 ```bash
@@ -67,8 +74,11 @@ Safari en iPhone, no mezclen la página nueva con archivos viejos guardados.
 
 - Sección de fresas: la vista queda fija (sticky) mientras se hace scroll y
   el vaso 3D se arma en tres pasos (fresas, crema, leche condensada).
-  `app.js` calcula el progreso, pinta en el `<canvas>` el cuadro que toca y
-  escribe `--s1`, `--s2` y `--s3` para los pasos, las etiquetas y el disco.
+  El tramo fijo es 160 % de pantalla en escritorio y 110 % en teléfonos; el
+  vaso termina al 78 % (`ANIM_FIN`) y el resto lo deja quieto antes de soltar.
+  Un bucle con lerp (0,09 PC / 0,08 táctil) suaviza el scroll y el `<canvas>`
+  mezcla los dos cuadros vecinos; los pasos, las etiquetas y el disco
+  (`--s1`, `--s2`, `--s3`) leen ese mismo valor suavizado.
 - Los cuadros se descargan cuando la sección se acerca (unos 2 MB en
   pantallas grandes, menos de 1 MB en teléfonos). Con "ahorro de datos"
   no se descargan y se ve la foto del vaso terminado.
@@ -87,8 +97,9 @@ corte, crema, copete de crema batida, leche condensada y la fresa de arriba.
 Las mitades caen con física real (Bullet); su posición final queda guardada
 en `tools/vaso-3d/reposo.json` para que cada render dé el mismo vaso.
 
-Requiere Blender 4.2 (o `pip install bpy==4.2.0` con Python 3.11). Para
-regenerar la secuencia (unos 50 min en 4 núcleos):
+Funciona con Blender 4.2 y 5.x (la secuencia publicada se renderizó con
+5.2; `vaso.blend` guardado con 5.2 no abre en 4.x). Para regenerar la
+secuencia (unos 50 min con CPU en una laptop de 6 núcleos):
 
 ```bash
 blender -b -P tools/vaso-3d/vaso.py -- --out render --blend tools/vaso-3d/vaso.blend
