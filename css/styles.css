@@ -874,7 +874,27 @@ html:has(.drawer[open]) { overflow: hidden; }
   .clip:hover .clip__play { transform: translate(-50%, -50%) scale(1.12); }
 }
 
-/* En redes: cada foto es un post con velo al pasar el mouse. */
+/* En redes: tres pastillas con las redes y cada foto es un post con su
+   etiqueta de red (siempre visible) y velo al pasar el mouse. */
+.redes__links { display: flex; flex-wrap: wrap; gap: 8px; }
+.red {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 8px 16px;
+  border: 3px solid var(--blanco);
+  font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .1em;
+  transition: background-color var(--dur-micro), color var(--dur-micro), transform var(--dur-micro);
+}
+.red:hover { opacity: 1; transform: translate(-2px, -2px); }
+.red--ig:hover { background: var(--blanco); color: var(--magenta); }
+.red--tt:hover { background: var(--petroleo); border-color: var(--petroleo); color: var(--turquesa-claro); }
+.red--fb:hover { background: var(--amarillo); border-color: var(--amarillo); color: var(--petroleo); }
+.post b {
+  position: absolute; top: 10px; left: 10px; z-index: 1; padding: 5px 9px;
+  font-family: var(--font-display); font-weight: 400; font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+  box-shadow: 2px 2px 0 var(--petroleo);
+}
+.post--ig b { background: var(--blanco); color: var(--magenta); }
+.post--tt b { background: var(--petroleo); color: var(--turquesa-claro); box-shadow: 2px 2px 0 var(--blanco); }
+.post--fb b { background: var(--amarillo); color: var(--petroleo); }
 .post { position: relative; display: block; overflow: hidden; }
 .post img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; transition: transform var(--dur-build) var(--ease-build); }
 .post span {
