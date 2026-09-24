@@ -42,7 +42,9 @@ o dos minutos.
 Editar el arreglo `MENU` al inicio de `js/app.js`. Cada producto lleva
 `cat` (categoría; los filtros salen solos de las categorías que existan),
 `name`, `desc`, `price`, `img` (nombre del archivo en `img/` sin extensión)
-y `pos` (encuadre de la foto, `object-position`).
+y `pos` (encuadre de la foto, `object-position`). `ing` es la lista de
+ingredientes que aparece al pasar el mouse por la foto (en táctil, con el
+botón "i"); PENDIENTE validarla con el cliente.
 
 Si un producto no tiene foto propia, `img: null`: la tarjeta muestra el panda
 con "Foto pronto". Mejor eso que repetir la foto de otro producto. Hoy están

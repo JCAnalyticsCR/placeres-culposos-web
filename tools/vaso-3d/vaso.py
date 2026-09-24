@@ -17,7 +17,7 @@ Uso (Blender 4.2 o 5.x, cualquiera de las dos formas):
 
 Opciones:
     --out DIR       carpeta de salida para los PNG (obligatoria)
-    --step N        renderiza 1 de cada N cuadros (por defecto 4 -> 61 cuadros)
+    --step N        renderiza 1 de cada N cuadros (por defecto 3 -> 81 cuadros)
     --frames A,B,C  renderiza solo esos cuadros (pruebas)
     --samples N     muestras de Cycles (por defecto 64, con denoise)
     --scale PCT     porcentaje de la resolución 800x1000 (pruebas: 50)
@@ -65,7 +65,7 @@ F_CORONA = (212, 226)    # fresa entera arriba
 N_MITADES = 22
 NIVEL_CREMA = 1.06
 
-RES = (800, 1000)
+RES = (1000, 1250)
 # Color: "Standard" deja los rojos de la fresa saturados (AgX y Filmic los
 # llevan a rosado pastel); la luz está calibrada para no quemar la crema.
 LUZ = 0.12         # multiplicador global de las luces
@@ -93,7 +93,7 @@ def args_cli():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
     p = argparse.ArgumentParser()
     p.add_argument("--out", required=True)
-    p.add_argument("--step", type=int, default=4)
+    p.add_argument("--step", type=int, default=3)
     p.add_argument("--frames", default="")
     p.add_argument("--samples", type=int, default=64)
     p.add_argument("--scale", type=int, default=100)
@@ -191,7 +191,8 @@ def mat_vaso():
 def mat_piel():
     """Piel de fresa: rojo con variación, semillas (Voronoi) hundidas y brillo húmedo."""
     mat, nt, b = principled("FresaPiel")
-    set_in(b, rough=0.3, sss=0.1, sss_r=(1.0, 0.18, 0.1), sss_s=0.03,
+    # Más subsurface: la fresa se ve jugosa y no de plástico.
+    set_in(b, rough=0.3, sss=0.22, sss_r=(1.0, 0.18, 0.1), sss_s=0.035,
            coat=0.2, coat_r=0.08, spec=0.55)
     L = nt.links
     tc = nodo(nt, "ShaderNodeTexCoord", -1400, 200)
@@ -1010,6 +1011,11 @@ def armar_escena(a):
 
     cam_d = bpy.data.cameras.new("Camara")
     cam_d.lens = 80
+    # Profundidad de campo suave: el borde de atrás del vaso y las fresas que
+    # caen quedan apenas fuera de foco, como en una foto de producto.
+    cam_d.dof.use_dof = True
+    cam_d.dof.focus_distance = 9.45
+    cam_d.dof.aperture_fstop = 2.0
     cam_d.sensor_fit = "VERTICAL"
     cam_d.sensor_height = 24
     cam = nuevo_obj("Camara", cam_d)
@@ -1041,7 +1047,7 @@ def armar_escena(a):
     escena.render.resolution_x, escena.render.resolution_y = RES
     escena.render.resolution_percentage = a.scale
     escena.render.use_motion_blur = True
-    escena.render.motion_blur_shutter = 0.45
+    escena.render.motion_blur_shutter = 0.5
     escena.render.image_settings.file_format = "PNG"
     escena.render.image_settings.color_mode = "RGBA"
     escena.render.image_settings.color_depth = "8"

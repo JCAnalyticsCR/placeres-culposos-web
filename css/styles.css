@@ -282,8 +282,55 @@ html:has(.drawer[open]) { overflow: hidden; }
   box-shadow: var(--sombra-tarjeta);
 }
 .card[hidden] { display: none; }
-.card__media { height: 190px; overflow: hidden; background: var(--rosa); }
-.card__media img { width: 100%; height: 190px; object-fit: cover; }
+.card__media { position: relative; height: 190px; overflow: hidden; background: var(--rosa); }
+.card__media img { width: 100%; height: 190px; object-fit: cover; transition: transform var(--dur-build) var(--ease-build); }
+
+/* Ingredientes: panel que sube desde abajo de la foto al pasar el mouse
+   (o al enfocar con teclado); en pantallas táctiles lo abre el botón "i".
+   Las fichas entran una tras otra (--i las escalona). */
+.card__ing {
+  position: absolute; inset: auto 0 0 0; z-index: 1;
+  padding: 12px 14px 14px;
+  background: rgba(31, 58, 74, .94); color: var(--blanco);
+  transform: translateY(100%);
+  transition: transform var(--dur-build) var(--ease-build);
+}
+.card__ing-k {
+  display: block; margin-bottom: 8px;
+  font-weight: 700; font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--amarillo);
+}
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.chips li {
+  padding: 4px 8px;
+  background: var(--blanco); color: var(--petroleo);
+  font-family: var(--font-display); font-size: 13px; letter-spacing: .04em; text-transform: uppercase;
+  box-shadow: 2px 2px 0 var(--magenta);
+  opacity: 0; transform: translateY(8px);
+  transition: opacity var(--dur-micro), transform var(--dur-micro) var(--ease-build);
+  transition-delay: calc(var(--i, 0) * 45ms);
+}
+.card.is-open .card__ing,
+.card:focus-within .card__ing { transform: none; }
+.card.is-open .chips li,
+.card:focus-within .chips li { opacity: 1; transform: none; }
+@media (hover: hover) {
+  .card:hover .card__ing { transform: none; }
+  .card:hover .chips li { opacity: 1; transform: none; }
+  .card:hover .card__media img { transform: scale(1.06); }
+}
+.card__info {
+  position: absolute; top: 8px; right: 8px; z-index: 2;
+  display: none; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border: 0; border-radius: 50%; cursor: pointer;
+  background: var(--blanco); color: var(--petroleo);
+  font-family: var(--font-display); font-size: 20px;
+  box-shadow: 2px 2px 0 var(--petroleo);
+}
+.card.is-open .card__info { background: var(--amarillo); }
+@media (hover: none) {
+  .card__info { display: flex; }
+}
 
 /* Producto sin foto propia: panda de la marca en vez de repetir otra foto. */
 .card--sin-foto .card__media {
@@ -509,9 +556,29 @@ html:has(.drawer[open]) { overflow: hidden; }
   height: calc(100svh - var(--nav-h));
   padding-block: 24px;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  /* Una sola fila del alto de la pantalla: el escenario nunca crece más
+     que ella, así el disco y el vaso no se salen por abajo. */
+  grid-template-rows: minmax(0, 1fr);
+  align-items: stretch;
 }
-.fresas.is-pinned .fresas__title { font-size: clamp(52px, min(7vw, 11svh), 96px); }
+.fresas.is-pinned .fresas__copy { justify-content: center; min-height: 0; }
+.fresas.is-pinned .fresas__title { font-size: clamp(48px, min(7vw, 10svh), 96px); }
 .fresas.is-pinned .cup-stage { height: 100%; align-self: stretch; }
+
+/* Pantallas bajas (laptops de 13" con la barra del navegador): el texto se
+   compacta para que precio y botón queden dentro de la vista fija. */
+@media (min-width: 860px) and (max-height: 760px) {
+  .fresas.is-pinned .fresas__copy { gap: 12px; }
+  .fresas.is-pinned .fresas__lead { font-size: 15px; line-height: 1.45; }
+  .fresas.is-pinned .steps { gap: 8px; margin-top: 0; }
+  .fresas.is-pinned .fresas__buy { margin-top: 0; }
+  .fresas.is-pinned .price-big { font-size: 34px; }
+}
+@media (min-width: 860px) and (max-height: 660px) {
+  .fresas.is-pinned .fresas__lead { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .fresas.is-pinned .step div span { display: none; }
+  .fresas.is-pinned .step__num { width: 36px; height: 36px; font-size: 17px; }
+}
 
 /* Teléfono con vista fija: título arriba, vaso al centro y pasos en fila
    abajo, todo en una pantalla. El párrafo queda para lectores de pantalla

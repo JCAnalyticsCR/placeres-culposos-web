@@ -4,11 +4,11 @@ Uso:
     python tools/vaso-3d/exportar.py <carpeta con f000.png ... f240.png>
 
 Genera, con fondo transparente (el disco blanco y el rosado los pone el CSS):
-    img/vaso/g/00.webp ... 60.webp   800x1000, pantallas grandes y retina
-    img/vaso/c/00.webp ... 60.webp   480x600, teléfonos
+    img/vaso/g/00.webp ... NN.webp   1000x1250, pantallas grandes y retina
+    img/vaso/c/00.webp ... NN.webp   600x750, teléfonos
 
-`js/app.js` (VASO_CUADROS) asume 61 cuadros numerados 00-60: si cambia la
-cantidad de cuadros, actualizar esa constante.
+`js/app.js` (VASO_CUADROS) debe coincidir con la cantidad de cuadros que
+salen (numerados 00-NN): si cambia, actualizar esa constante.
 """
 
 import sys
@@ -19,7 +19,7 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter
 DESTINO = Path(__file__).resolve().parents[2] / "img" / "vaso"
 # carpeta -> (ancho, alto, calidad). A partir de calidad 60 no se nota la
 # diferencia; lo que más pesa es el canal alfa (alpha_quality).
-TAMANOS = {"g": (800, 1000, 60), "c": (480, 600, 64)}
+TAMANOS = {"g": (1000, 1250, 60), "c": (600, 750, 64)}
 
 
 def mascara_bordes(tam):
