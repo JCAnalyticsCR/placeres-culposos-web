@@ -1,0 +1,28 @@
+# Contexto privado (nunca se publica)
+CLAUDE.local.md
+.claude/
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+
+# Editores
+.vscode/
+.idea/
+
+# Python (tools/)
+__pycache__/
+.venv/
+
+# Originales del cliente y material de diseño: viven en la carpeta del
+# handoff, fuera del repo. Solo se versionan los optimizados de img/.
+originales/
+fuente/
+design/
+*.pptx
+*.zip
+
+# Notas internas del proyecto
+notas-internas/
