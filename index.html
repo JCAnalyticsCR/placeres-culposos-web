@@ -22,8 +22,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=20260924g">
-<script src="js/app.js?v=20260924g" defer></script>
+<link rel="stylesheet" href="css/styles.css?v=20260924h">
+<script src="js/app.js?v=20260924h" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -128,7 +128,7 @@
   <p class="sr-only" id="menu-estado" aria-live="polite"></p>
   <div class="menu__grid" id="menu-grid"></div>
   <template id="tpl-card">
-    <article class="card reveal">
+    <article class="card reveal" tabindex="0">
       <div class="card__media">
         <img alt="" loading="lazy" decoding="async">
         <div class="card__ing"><span class="card__ing-k">Lleva</span><ul class="chips"></ul></div>
@@ -271,7 +271,7 @@
     <!-- PENDIENTE: el horario es marcador del diseño; confirmar con el cliente. -->
     <address class="ubicacion__data">
       Frente a Coopenae, El Roble, Puntarenas<br>
-      Lunes a domingo · 1:00 p. m. a 9:00 p. m.<br>
+      Lunes a domingo · <span class="nowrap">1:00 p. m.</span> a <span class="nowrap">9:00 p. m.</span><br>
       <a href="tel:+50664564841">+506 6456 4841</a>
     </address>
     <div class="actions">

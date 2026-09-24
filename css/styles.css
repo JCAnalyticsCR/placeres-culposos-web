@@ -911,3 +911,23 @@ html:has(.drawer[open]) { overflow: hidden; }
 
 /* Ubicación: foto con sombra dura, como las tarjetas. */
 .ubicacion__foto { box-shadow: 10px 10px 0 var(--petroleo); }
+
+/* ---------- Ajustes de teléfono y teclado ---------- */
+.nowrap { white-space: nowrap; }
+/* Tarjeta enfocable con teclado: al enfocarla sube el panel de ingredientes. */
+.card:focus-visible { outline-offset: 0; }
+/* Promos en teléfono: título y chip en una línea compacta; sin flechas, se
+   desliza con el dedo (el snap ya acomoda cada tarjeta). */
+@media (max-width: 599.98px) {
+  .promos { padding-block: 56px; }
+  .promos__head { margin-bottom: 18px; gap: 12px; }
+  .promos__title { gap: 10px; }
+  .promos__title .h2 { font-size: clamp(40px, 11vw, 52px); }
+  .arrows { display: none; }
+  .promo { min-height: 240px; padding: 26px; }
+  .promo__big { font-size: 76px; }
+}
+/* Ubicación en teléfono: datos un poco más chicos para que quepan en línea. */
+@media (max-width: 420px) {
+  .ubicacion__data { font-size: 16px; }
+}
