@@ -10,7 +10,7 @@ la sección #fresas reproduce con el scroll:
 Las posiciones finales de las fresas salen de una simulación de cuerpos
 rígidos (Bullet) con semilla fija, así que cada corrida da el mismo vaso.
 
-Uso (Blender 4.2, cualquiera de las dos formas):
+Uso (Blender 4.2 o 5.x, cualquiera de las dos formas):
 
     blender -b -P tools/vaso-3d/vaso.py -- --out <carpeta>
     python tools/vaso-3d/vaso.py --out <carpeta>        # con `pip install bpy==4.2.0`
@@ -810,11 +810,20 @@ def simular_reposo(mitades):
 # ---------------------------------------------------------------- animación
 
 
+def curvas(ad):
+    """F-curves de la acción. Blender 5 quitó Action.fcurves: ahora viven en el
+    channelbag del slot asignado (acciones con slots, desde 4.4)."""
+    if hasattr(ad.action, "fcurves"):
+        return ad.action.fcurves
+    from bpy_extras import anim_utils
+    return anim_utils.action_get_channelbag_for_slot(ad.action, ad.action_slot).fcurves
+
+
 def clave(obj, ruta, f, interp_="BEZIER", easing="AUTO", dato=None):
     objetivo = dato or obj
     objetivo.keyframe_insert(ruta, frame=f)
     ad = objetivo.animation_data
-    for fc in ad.action.fcurves:
+    for fc in curvas(ad):
         if fc.data_path == ruta:
             for kp in fc.keyframe_points:
                 if abs(kp.co.x - f) < 0.01:
@@ -827,7 +836,7 @@ def visible_desde(obj, f):
     obj.keyframe_insert("hide_render", frame=0)
     obj.hide_render = False
     obj.keyframe_insert("hide_render", frame=f)
-    for fc in obj.animation_data.action.fcurves:
+    for fc in curvas(obj.animation_data):
         if fc.data_path == "hide_render":
             for kp in fc.keyframe_points:
                 kp.interpolation = "CONSTANT"
