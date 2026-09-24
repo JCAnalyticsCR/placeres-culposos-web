@@ -45,6 +45,11 @@ const PANDA_FELIZ = new Set(['fresas', 'ubicacion']);
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const conParallax = window.matchMedia('(min-width: 768px)');
 const escritorio = window.matchMedia('(min-width: 860px)');
+// La vista fija del vaso necesita alto: en teléfonos acostados no se fija.
+const puedeFijar = window.matchMedia('(min-height: 600px)');
+
+/* Vaso 3D: cuadros en img/vaso/{g,c}/00-60.webp (tools/vaso-3d/exportar.py). */
+const VASO_CUADROS = 61;
 
 const clamp01 = (n) => Math.min(1, Math.max(0, n));
 
@@ -127,6 +132,106 @@ function initPromos() {
   });
 }
 
+/* ---------- Vaso 3D: secuencia de cuadros ----------
+   Los cuadros se piden cuando la sección se acerca, de grueso a fino
+   (0, 60, 32, 16, 48…), así que siempre hay uno cercano que pintar mientras
+   llegan los demás. El canvas se muestra cuando ya están el primero y el
+   último; si fallan, queda la <img> del vaso terminado. */
+
+function crearSecuencia(fresas) {
+  const escenario = fresas.querySelector('.cup-stage');
+  const canvas = fresas.querySelector('.cup-stage__canvas');
+  const ctx = canvas.getContext('2d');
+  const listos = new Array(VASO_CUADROS).fill(null);
+  let carpeta = 'g';
+  let pedido = 0;
+  let pintado = -1;
+  let empezada = false;
+
+  function orden() {
+    const lista = [0, VASO_CUADROS - 1];
+    for (let paso = 32; paso >= 1; paso /= 2) {
+      for (let i = 0; i < VASO_CUADROS; i += paso) {
+        if (!lista.includes(i)) lista.push(i);
+      }
+    }
+    return lista;
+  }
+
+  // El más cercano ya cargado; ante empate, el anterior (mejor atrasado que adelantado).
+  function cercano(n) {
+    for (let d = 0; d < VASO_CUADROS; d += 1) {
+      if (n - d >= 0 && listos[n - d]) return n - d;
+      if (n + d < VASO_CUADROS && listos[n + d]) return n + d;
+    }
+    return -1;
+  }
+
+  function pintar() {
+    if (!fresas.classList.contains('has-seq')) return;
+    const i = cercano(pedido);
+    if (i < 0 || i === pintado) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(listos[i], 0, 0, canvas.width, canvas.height);
+    pintado = i;
+  }
+
+  function empezar() {
+    if (empezada) return;
+    empezada = true;
+    // Tamaño del cuadro pintado en píxeles reales: >520 px pide los de 800x1000.
+    const ancho = Math.min(escenario.clientWidth, escenario.clientHeight * 0.8);
+    carpeta = ancho * (window.devicePixelRatio || 1) > 520 ? 'g' : 'c';
+    if (carpeta === 'c') {
+      canvas.width = 480;
+      canvas.height = 600;
+    }
+    const cola = orden();
+    let enVuelo = 0;
+    const siguiente = () => {
+      while (enVuelo < 6 && cola.length) {
+        const i = cola.shift();
+        const img = new Image();
+        img.src = `img/vaso/${carpeta}/${String(i).padStart(2, '0')}.webp`;
+        enVuelo += 1;
+        img.decode()
+          .then(() => {
+            listos[i] = img;
+            if (listos[0] && listos[VASO_CUADROS - 1]) fresas.classList.add('has-seq');
+            pintado = -1;
+            pintar();
+          })
+          .catch(() => {})
+          .finally(() => {
+            enVuelo -= 1;
+            siguiente();
+          });
+      }
+    };
+    siguiente();
+  }
+
+  // Empieza a cargar cuando falta ~una pantalla y media para llegar.
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entradas) => {
+      if (entradas.some((e) => e.isIntersecting)) {
+        io.disconnect();
+        empezar();
+      }
+    }, { rootMargin: '150% 0px' });
+    io.observe(fresas);
+  } else {
+    empezar();
+  }
+
+  return {
+    mostrar(p) {
+      pedido = Math.round(p * (VASO_CUADROS - 1));
+      pintar();
+    },
+  };
+}
+
 /* ---------- Scroll: parallax, vaso de fresas y panda ----------
    Un solo pase por frame (rAF): primero se leen todas las medidas, después
    se escribe. Nada se escribe si el valor no cambió lo suficiente. */
@@ -134,6 +239,7 @@ function initPromos() {
 function initScroll() {
   const hero = document.getElementById('inicio');
   const fresas = document.getElementById('fresas');
+  const pin = fresas.querySelector('.fresas__pin');
   const panda = document.querySelector('.panda');
   const burbuja = document.querySelector('.panda__bubble');
   const secciones = SECCIONES.map((id) => document.getElementById(id));
@@ -142,6 +248,19 @@ function initScroll() {
   let ultimaSeccion = -1;
   let ultimoP = -1;
   let ultimoY = -1;
+  let fijoTop = 0;
+
+  // Con "ahorro de datos" o "reducir movimiento" no se baja la secuencia:
+  // se queda la foto del vaso terminado y la sección no se fija.
+  const ahorro = Boolean(navigator.connection && navigator.connection.saveData);
+  let secuencia = null;
+
+  function aplicarModo() {
+    if (!secuencia && !ahorro && !reduceMotion.matches) secuencia = crearSecuencia(fresas);
+    const fijar = Boolean(secuencia) && !reduceMotion.matches && puedeFijar.matches;
+    fresas.classList.toggle('is-pinned', fijar);
+    fijoTop = fijar ? parseFloat(getComputedStyle(pin).top) || 0 : 0;
+  }
 
   const pedirFrame = () => {
     if (pendiente) return;
@@ -150,10 +269,13 @@ function initScroll() {
   };
 
   function escribirVaso(p) {
+    // Tramos alineados con la línea de tiempo de tools/vaso-3d/vaso.py
+    // (fresas 0-88, crema 90-166, leche y fresa de arriba 163-226 de 240).
     const tramo = (a, b) => clamp01((p - a) / (b - a)).toFixed(3);
-    fresas.style.setProperty('--s1', tramo(0.05, 0.4));
-    fresas.style.setProperty('--s2', tramo(0.35, 0.7));
-    fresas.style.setProperty('--s3', tramo(0.6, 0.95));
+    fresas.style.setProperty('--s1', tramo(0.02, 0.37));
+    fresas.style.setProperty('--s2', tramo(0.37, 0.69));
+    fresas.style.setProperty('--s3', tramo(0.68, 0.94));
+    if (secuencia) secuencia.mostrar(p);
     if (!fresas.classList.contains('is-live')) {
       // Las transiciones se encienden después del primer estado escrito.
       requestAnimationFrame(() => fresas.classList.add('is-live'));
@@ -172,6 +294,7 @@ function initScroll() {
     if (sec !== ultimaSeccion) {
       ultimaSeccion = sec;
       panda.classList.toggle('is-happy', PANDA_FELIZ.has(SECCIONES[sec]));
+      panda.classList.toggle('is-away', SECCIONES[sec] === 'fresas' && fresas.classList.contains('is-pinned'));
       burbuja.textContent = DICHOS[sec];
     }
 
@@ -182,9 +305,12 @@ function initScroll() {
       hero.style.setProperty('--y', String(Math.round(y)));
     }
 
-    // Progreso del vaso (0-1) según la posición de la sección.
+    // Progreso del vaso (0-1). Con vista fija: cuánto se recorrió mientras
+    // el bloque está pegado. Sin ella: cuánto de la sección entró en pantalla.
     const r = rects[SECCIONES.indexOf('fresas')];
-    const p = clamp01((vh * 0.9 - r.top) / (Math.min(r.height, vh) * 0.9));
+    const p = fresas.classList.contains('is-pinned')
+      ? clamp01((fijoTop - r.top) / (r.height - pin.offsetHeight))
+      : clamp01((vh * 0.9 - r.top) / (Math.min(r.height, vh) * 0.9));
     const extremoNuevo = (p === 0 || p === 1) && p !== ultimoP;
     if (Math.abs(p - ultimoP) > 0.003 || extremoNuevo) {
       ultimoP = p;
@@ -202,6 +328,8 @@ function initScroll() {
 
   // Cambio de preferencias en vivo: volver al estado neutro y recalcular.
   function reiniciar() {
+    aplicarModo();
+    ultimaSeccion = -1;
     hero.style.removeProperty('--y');
     ['--s1', '--s2', '--s3'].forEach((v) => fresas.style.removeProperty(v));
     fresas.classList.remove('is-live');
@@ -215,6 +343,8 @@ function initScroll() {
   window.addEventListener('resize', pedirFrame);
   reduceMotion.addEventListener('change', reiniciar);
   conParallax.addEventListener('change', reiniciar);
+  puedeFijar.addEventListener('change', reiniciar);
+  aplicarModo();
   frame();
 }
 
