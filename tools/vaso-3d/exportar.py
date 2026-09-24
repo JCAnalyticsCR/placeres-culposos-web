@@ -17,7 +17,9 @@ from pathlib import Path
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
 DESTINO = Path(__file__).resolve().parents[2] / "img" / "vaso"
-TAMANOS = {"g": (800, 1000, 70), "c": (480, 600, 72)}  # carpeta -> (ancho, alto, calidad)
+# carpeta -> (ancho, alto, calidad). A partir de calidad 60 no se nota la
+# diferencia; lo que más pesa es el canal alfa (alpha_quality).
+TAMANOS = {"g": (800, 1000, 60), "c": (480, 600, 64)}
 
 
 def mascara_bordes(tam):
@@ -53,7 +55,7 @@ def main():
         for carpeta, (w, h, q) in TAMANOS.items():
             salida = DESTINO / carpeta / f"{i:02d}.webp"
             im.resize((w, h), Image.LANCZOS).save(
-                salida, "WEBP", quality=q, alpha_quality=80, method=6)
+                salida, "WEBP", quality=q, alpha_quality=70, method=6)
             total[carpeta] += salida.stat().st_size
 
     for carpeta, bytes_ in total.items():
