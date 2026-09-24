@@ -473,7 +473,47 @@ function initScroll() {
   frame();
 }
 
+/* ---------- Barra compacta y contador de TikTok ---------- */
+
+function initBarra() {
+  const nav = document.querySelector('.nav');
+  // --nav-h manda el tope de la vista fija: se mide el alto real (cambia al
+  // compactarse y con el tamaño de letra del usuario).
+  const medir = () => document.documentElement.style.setProperty('--nav-h', `${nav.offsetHeight}px`);
+  if ('ResizeObserver' in window) new ResizeObserver(medir).observe(nav);
+  medir();
+  let compacta = false;
+  window.addEventListener('scroll', () => {
+    const debe = window.scrollY > 80;
+    if (debe !== compacta) {
+      compacta = debe;
+      nav.classList.toggle('is-compact', debe);
+    }
+  }, { passive: true });
+}
+
+function initCifra() {
+  const el = document.querySelector('.cifra');
+  if (!el || reduceMotion.matches || !('IntersectionObserver' in window)) return;
+  const fin = Number(el.dataset.cifra);
+  const io = new IntersectionObserver((entradas) => {
+    if (!entradas.some((e) => e.isIntersecting)) return;
+    io.disconnect();
+    const t0 = performance.now();
+    const paso = (t) => {
+      const k = Math.min(1, (t - t0) / 1400);
+      el.textContent = String(Math.round(fin * (1 - Math.pow(1 - k, 3))));
+      if (k < 1) requestAnimationFrame(paso);
+    };
+    requestAnimationFrame(paso);
+  }, { threshold: 0.6 });
+  io.observe(el);
+}
+
 initMenu();
 initDrawer();
 initPromos();
 initScroll();
+initBarra();
+initCifra();
+

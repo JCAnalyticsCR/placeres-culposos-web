@@ -126,6 +126,13 @@ h1, h2, h3 { font-weight: 400; }
 .btn--white { background: var(--blanco); color: var(--petroleo); }
 .btn--outline { border: 3px solid currentColor; padding: 13px 28px; background: transparent; }
 .btn--outline.btn--lg { padding: 15px 32px; }
+@media (hover: hover) {
+  .btn { transition: transform var(--dur-micro), box-shadow var(--dur-micro); }
+  .btn:hover { transform: translate(-3px, -3px); opacity: 1; }
+  .btn--dark:hover { box-shadow: 5px 5px 0 var(--amarillo); }
+  .btn--yellow:hover, .btn--white:hover, .btn--outline:hover { box-shadow: 5px 5px 0 var(--petroleo); }
+  .ubicacion .btn--outline:hover { box-shadow: 5px 5px 0 var(--magenta); }
+}
 
 .actions { display: flex; gap: 14px; flex-wrap: wrap; }
 
@@ -137,7 +144,13 @@ h1, h2, h3 { font-weight: 400; }
   padding: 14px var(--gutter);
   background: var(--magenta);
   border-bottom: 2px solid rgba(255, 255, 255, .25);
+  transition: padding var(--dur-micro), box-shadow var(--dur-micro);
 }
+/* Al bajar, la barra se compacta y proyecta sombra dura (app.js pone .is-compact
+   y mantiene --nav-h con el alto real). */
+.nav.is-compact { padding-block: 8px; box-shadow: 0 4px 0 var(--petroleo); }
+.nav.is-compact .brand img { width: 36px; height: 36px; }
+.brand img { transition: width var(--dur-micro), height var(--dur-micro); }
 
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand img { width: 48px; height: 48px; }
@@ -220,6 +233,8 @@ html:has(.drawer[open]) { overflow: hidden; }
 }
 
 .hero__copy { display: flex; flex-direction: column; gap: 22px; padding-bottom: 120px; }
+/* En teléfono la foto va debajo del texto: sin el aire de 120px. */
+@media (max-width: 767.98px) { .hero__copy { padding-bottom: 32px; } .hero__media { height: clamp(300px, 90vw, 420px); } }
 
 .hero h1 {
   margin: 0;
@@ -686,12 +701,27 @@ html:has(.drawer[open]) { overflow: hidden; }
 /* ---------- Footer ---------- */
 
 .footer {
-  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  display: grid; gap: 24px; align-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   /* abajo deja libre el botón flotante de WhatsApp */
-  padding: 22px var(--gutter) calc(88px + env(safe-area-inset-bottom, 0px));
-  background: var(--petroleo); color: rgba(255, 255, 255, .8);
-  font-size: 13px; text-transform: uppercase; letter-spacing: .1em;
+  padding: 40px var(--gutter) calc(96px + env(safe-area-inset-bottom, 0px));
+  background: var(--petroleo); color: var(--blanco);
+  border-top: 6px solid var(--amarillo);
 }
+.footer__brand { display: flex; align-items: center; gap: 14px; }
+.footer__brand img { width: 64px; height: 64px; }
+.footer__brand b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 22px; letter-spacing: .04em; text-transform: uppercase; }
+.footer__brand span { font-size: 13px; opacity: .8; }
+.footer__links { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.footer__links a {
+  padding: 10px 16px; min-height: 44px; display: inline-flex; align-items: center;
+  border: 2px solid rgba(255, 255, 255, .35);
+  font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .1em;
+  transition: background-color var(--dur-micro), border-color var(--dur-micro);
+}
+.footer__links a:hover { background: var(--amarillo); border-color: var(--amarillo); color: var(--petroleo); opacity: 1; }
+/* Ocupa toda la fila y deja aire a la derecha: ahí flota el panda. */
+.footer__copy { grid-column: 1 / -1; padding-right: clamp(140px, 16vw, 200px); font-size: 12px; text-transform: uppercase; letter-spacing: .1em; opacity: .7; }
 
 /* ---------- Elementos fijos ---------- */
 
@@ -755,3 +785,109 @@ html:has(.drawer[open]) { overflow: hidden; }
     transition-duration: .01ms !important;
   }
 }
+
+/* ---------- Capa de acabado: texturas, entradas y detalles de afiche ---------- */
+
+/* Hero: las líneas entran una tras otra al cargar (solo sin reduced-motion). */
+@keyframes subir { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  .hero__copy > * { animation: subir .75s var(--ease-build) both; }
+  .hero__copy > :nth-child(2) { animation-delay: .08s; }
+  .hero__copy > :nth-child(3) { animation-delay: .18s; }
+  .hero__copy > :nth-child(4) { animation-delay: .28s; }
+  .hero__media { animation: subir .9s var(--ease-build) .15s both; }
+}
+
+/* Grano fino estático sobre el hero: textura de afiche impreso, cero peticiones. */
+.hero__grain {
+  position: absolute; inset: 0; pointer-events: none; opacity: .09; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Insignia giratoria junto a la foto del hero. */
+.badge-rot {
+  position: absolute; right: -2%; top: 2%; z-index: 2;
+  width: clamp(110px, 12vw, 150px); aspect-ratio: 1;
+  display: grid; place-items: center;
+}
+.badge-rot svg { position: absolute; inset: 0; width: 100%; height: 100%; animation: girar 16s linear infinite; }
+.badge-rot text { font-family: var(--font-body); font-weight: 700; font-size: 12.4px; letter-spacing: .12em; fill: var(--blanco); }
+.badge-rot span {
+  width: 44%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+  background: var(--amarillo); color: var(--petroleo); font-size: 22px;
+  box-shadow: 3px 3px 0 var(--petroleo);
+}
+@keyframes girar { to { transform: rotate(360deg); } }
+@media (max-width: 599.98px) { .badge-rot { display: none; } }
+
+/* Cinta de antojos: banda oscura con marquee CSS. */
+.marquee {
+  overflow: hidden; padding: 14px 0;
+  background: var(--petroleo); color: var(--amarillo);
+  border-block: 3px solid var(--blanco);
+}
+.marquee__track { display: flex; width: max-content; animation: marquee 34s linear infinite; }
+.marquee__track span {
+  flex: none; padding-right: .5em;
+  font-family: var(--font-display); font-size: clamp(20px, 2.4vw, 30px);
+  letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* Revelados al entrar en pantalla: CSS puro con view(); donde no hay soporte,
+   todo se ve de entrada. */
+@keyframes entrar { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal { animation: entrar linear both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
+  }
+}
+
+/* Promos: rayas diagonales sutiles, "2x" inclinado y levantar al pasar el mouse. */
+.promo { position: relative; transition: transform var(--dur-micro); }
+.promo--dark, .promo--yellow, .promo--teal {
+  background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .06) 0 10px, transparent 10px 24px);
+}
+.promo--white { background-image: repeating-linear-gradient(-45deg, rgba(31, 58, 74, .05) 0 10px, transparent 10px 24px); }
+.promo__big { display: inline-block; transform: rotate(-4deg); transform-origin: left bottom; }
+@media (hover: hover) {
+  .promo:hover { transform: translateY(-6px); }
+}
+
+/* TikTok: los cuadros son enlaces con botón de play; el del medio baja. */
+.clip { position: relative; display: block; overflow: hidden; box-shadow: var(--sombra-boton); }
+.clip img { width: 100%; height: auto; aspect-ratio: 9 / 16; object-fit: cover; transition: transform var(--dur-build) var(--ease-build); }
+.tiktok__grid .clip:nth-child(2) { transform: translateY(24px); }
+.clip__play {
+  position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--blanco);
+  box-shadow: 3px 3px 0 var(--magenta);
+  transition: transform var(--dur-micro);
+}
+.clip__play::after {
+  content: ""; position: absolute; left: 55%; top: 50%; transform: translate(-50%, -50%);
+  border-left: 18px solid var(--petroleo); border-top: 11px solid transparent; border-bottom: 11px solid transparent;
+}
+@media (hover: hover) {
+  .clip:hover img { transform: scale(1.06); }
+  .clip:hover .clip__play { transform: translate(-50%, -50%) scale(1.12); }
+}
+
+/* En redes: cada foto es un post con velo al pasar el mouse. */
+.post { position: relative; display: block; overflow: hidden; }
+.post img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; transition: transform var(--dur-build) var(--ease-build); }
+.post span {
+  position: absolute; inset: auto 0 0 0; padding: 12px;
+  background: var(--petroleo); color: var(--amarillo);
+  font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .12em; text-align: center;
+  transform: translateY(100%); transition: transform var(--dur-fade) var(--ease-build);
+}
+@media (hover: hover) {
+  .post:hover img { transform: scale(1.06); }
+  .post:hover span { transform: none; }
+}
+.post:focus-visible span { transform: none; }
+
+/* Ubicación: foto con sombra dura, como las tarjetas. */
+.ubicacion__foto { box-shadow: 10px 10px 0 var(--petroleo); }

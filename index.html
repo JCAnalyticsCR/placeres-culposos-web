@@ -22,8 +22,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=20260924e">
-<script src="js/app.js?v=20260924e" defer></script>
+<link rel="stylesheet" href="css/styles.css?v=20260924f">
+<script src="js/app.js?v=20260924f" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -102,12 +102,17 @@
       </div>
     </div>
     <div class="hero__media">
+      <div class="badge-rot" aria-hidden="true">
+        <svg viewBox="0 0 120 120"><defs><path id="badge-circ" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs><text><textPath href="#badge-circ">PEDÍ POR WHATSAPP · FRENTE A COOPENAE · EL ROBLE · </textPath></text></svg>
+        <span>★</span>
+      </div>
       <img class="hero__img" src="img/pc_29-1100.webp"
            srcset="img/pc_29-600.webp 600w, img/pc_29-1100.webp 1100w"
            sizes="(max-width: 600px) 100vw, 560px"
            width="1100" height="1374" alt="Vaso de fresas con crema" fetchpriority="high" decoding="async">
     </div>
   </div>
+  <div class="hero__grain" aria-hidden="true"></div>
   <div class="hero__wave" aria-hidden="true"></div>
 </section>
 
@@ -123,7 +128,7 @@
   <p class="sr-only" id="menu-estado" aria-live="polite"></p>
   <div class="menu__grid" id="menu-grid"></div>
   <template id="tpl-card">
-    <article class="card">
+    <article class="card reveal">
       <div class="card__media">
         <img alt="" loading="lazy" decoding="async">
         <div class="card__ing"><span class="card__ing-k">Lleva</span><ul class="chips"></ul></div>
@@ -138,6 +143,13 @@
   </template>
 </section>
 
+<!-- Cinta de antojos (CSS puro) -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track">
+    <span>Fresas con crema ★ Bubble tea ★ Mangonadas ★ Frappés ★ Café ★ Crepes ★ Bingsu ★ Chapatazo ★ </span><span>Fresas con crema ★ Bubble tea ★ Mangonadas ★ Frappés ★ Café ★ Crepes ★ Bingsu ★ Chapatazo ★ </span>
+  </div>
+</div>
+
 <!-- PROMOS -->
 <section id="promos" class="promos" aria-labelledby="promos-titulo">
   <div class="promos__head">
@@ -151,28 +163,28 @@
     </div>
   </div>
   <div class="promos__track" id="promos-track" tabindex="0" role="region" aria-label="Promociones del mes">
-    <article class="promo promo--dark">
+    <article class="promo promo--dark reveal">
       <p class="promo__big">2x</p>
       <h3 class="promo__name">Fresas con crema</h3>
       <p class="promo__price">tradicionales · <b>₡4.000</b></p>
     </article>
-    <article class="promo promo--white">
+    <article class="promo promo--white reveal">
       <p class="promo__big">2x</p>
       <h3 class="promo__name">Milkshakes medianos</h3>
       <p class="promo__price">por solo · <b>₡4.500</b></p>
     </article>
-    <article class="promo promo--yellow">
+    <article class="promo promo--yellow reveal">
       <p class="promo__big">2x</p>
       <h3 class="promo__name">Ensalada de frutas</h3>
       <p class="promo__price">por solo · <b>₡5.000</b></p>
     </article>
-    <article class="promo promo--teal">
+    <article class="promo promo--teal reveal">
       <p class="promo__big">2x</p>
       <h3 class="promo__name">Bubble Tea</h3>
       <p class="promo__price">por solo · <b>₡5.000</b></p>
     </article>
-    <article class="promo promo--photo">
-      <img src="img/pc_07.webp" width="800" height="1000" alt="Mangonada especial" loading="lazy" decoding="async">
+    <article class="promo promo--photo reveal">
+      <img src="img/pc_07.webp" width="1000" height="1250" alt="Mangonada especial" loading="lazy" decoding="async">
       <div class="promo__tag">
         <h3>Antojo de domingo</h3>
         <p>Mangonada especial</p>
@@ -220,15 +232,15 @@
 <section id="tiktok" class="tiktok" aria-labelledby="tiktok-titulo">
   <div class="tiktok__copy">
     <p class="kicker kicker--mint">TikTok · @placeresculpososcr</p>
-    <h2 class="tiktok__title" id="tiktok-titulo">+152K<br><span>reproducciones</span></h2>
+    <h2 class="tiktok__title" id="tiktok-titulo">+<span class="cifra" data-cifra="152">152</span>K<br><span>reproducciones</span></h2>
     <p class="tiktok__lead">Así se hacen las Fresas Dubái que todos quieren probar.</p>
     <a class="btn btn--white" href="https://www.tiktok.com/@placeresculpososcr" target="_blank" rel="noopener">Seguir en TikTok</a>
   </div>
   <div class="tiktok__grid">
     <!-- Cuadros de videos de TikTok: decorativos, el texto de al lado dice lo importante. -->
-    <img src="img/pc_01.webp" width="640" height="1136" alt="" loading="lazy" decoding="async">
-    <img src="img/pc_02.webp" width="640" height="1136" alt="" loading="lazy" decoding="async">
-    <img src="img/pc_08.webp" width="640" height="1138" alt="Mamá e hijo compartiendo fresas con crema" loading="lazy" decoding="async">
+    <a class="clip reveal" href="https://www.tiktok.com/@placeresculpososcr" target="_blank" rel="noopener" aria-label="Ver en TikTok"><img src="img/pc_01.webp" width="640" height="1136" alt="" loading="lazy" decoding="async"><span class="clip__play"></span></a>
+    <a class="clip reveal" href="https://www.tiktok.com/@placeresculpososcr" target="_blank" rel="noopener" aria-label="Ver en TikTok"><img src="img/pc_02.webp" width="640" height="1136" alt="" loading="lazy" decoding="async"><span class="clip__play"></span></a>
+    <a class="clip reveal" href="https://www.tiktok.com/@placeresculpososcr" target="_blank" rel="noopener" aria-label="Ver en TikTok"><img src="img/pc_08.webp" width="720" height="1280" alt="Mamá e hijo compartiendo fresas con crema" loading="lazy" decoding="async"><span class="clip__play"></span></a>
   </div>
 </section>
 
@@ -239,11 +251,11 @@
     <a class="link-underline" href="https://www.instagram.com/placeresculpososcr/" target="_blank" rel="noopener">@placeresculpososcr</a>
   </div>
   <div class="redes__grid">
-    <img src="img/pc_31.webp" width="700" height="874" alt="Frappé de Nutella" loading="lazy" decoding="async">
-    <img src="img/pc_20.webp" width="700" height="874" alt="Crepes dulces" loading="lazy" decoding="async">
-    <img src="img/pc_23.webp" width="700" height="874" alt="Chapatazo" loading="lazy" decoding="async">
-    <img src="img/pc_25.webp" width="700" height="930" alt="Fresas rosadas con chocolate" loading="lazy" decoding="async">
-    <img src="img/pc_35.webp" width="700" height="930" alt="Bubble tea de fresa" loading="lazy" decoding="async">
+    <a class="post reveal" href="https://www.instagram.com/placeresculpososcr/" target="_blank" rel="noopener"><img src="img/pc_31.webp" width="1000" height="1249" alt="Frappé de Nutella" loading="lazy" decoding="async"><span>Ver en Instagram</span></a>
+    <a class="post reveal" href="https://www.instagram.com/placeresculpososcr/" target="_blank" rel="noopener"><img src="img/pc_20.webp" width="1000" height="1249" alt="Crepes dulces" loading="lazy" decoding="async"><span>Ver en Instagram</span></a>
+    <a class="post reveal" href="https://www.instagram.com/placeresculpososcr/" target="_blank" rel="noopener"><img src="img/pc_23.webp" width="1000" height="1249" alt="Chapatazo" loading="lazy" decoding="async"><span>Ver en Instagram</span></a>
+    <a class="post reveal" href="https://www.instagram.com/placeresculpososcr/" target="_blank" rel="noopener"><img src="img/pc_25.webp" width="1000" height="1329" alt="Fresas rosadas con chocolate" loading="lazy" decoding="async"><span>Ver en Instagram</span></a>
+    <a class="post reveal" href="https://www.instagram.com/placeresculpososcr/" target="_blank" rel="noopener"><img src="img/pc_35.webp" width="1000" height="1329" alt="Bubble tea de fresa" loading="lazy" decoding="async"><span>Ver en Instagram</span></a>
   </div>
 </section>
 
@@ -262,14 +274,26 @@
       <a class="btn btn--outline" href="https://www.google.com/maps/search/?api=1&amp;query=Placeres+Culposos+El+Roble+Puntarenas" target="_blank" rel="noopener">Cómo llegar</a>
     </div>
   </div>
-  <img class="ubicacion__foto" src="img/pc_10.webp" width="1200" height="1600" alt="Fachada del local de Placeres Culposos en El Roble" loading="lazy" decoding="async">
+  <img class="ubicacion__foto reveal" src="img/pc_10.webp" width="1565" height="2087" alt="Fachada del local de Placeres Culposos en El Roble" loading="lazy" decoding="async">
 </section>
 
 </main>
 
 <footer class="footer">
-  <span>© Placeres Culposos CR</span>
-  <span>Facebook · <a href="https://www.instagram.com/placeresculpososcr/" target="_blank" rel="noopener">Instagram</a> · <a href="https://www.tiktok.com/@placeresculpososcr" target="_blank" rel="noopener">TikTok</a> · PedidosYa</span>
+  <div class="footer__brand">
+    <img src="img/logo.webp" width="64" height="64" alt="" loading="lazy" decoding="async">
+    <div>
+      <b>Placeres Culposos CR</b>
+      <span>Heladería y cafetería · El Roble, Puntarenas</span>
+    </div>
+  </div>
+  <!-- PENDIENTE: enlaces de Facebook y PedidosYa. -->
+  <nav class="footer__links" aria-label="Redes sociales">
+    <a href="https://www.instagram.com/placeresculpososcr/" target="_blank" rel="noopener">Instagram</a>
+    <a href="https://www.tiktok.com/@placeresculpososcr" target="_blank" rel="noopener">TikTok</a>
+    <a href="https://wa.me/50664564841" target="_blank" rel="noopener">WhatsApp</a>
+  </nav>
+  <span class="footer__copy">© 2026 Placeres Culposos CR · Hecho con amor para ti</span>
 </footer>
 
 </div>

@@ -17,38 +17,38 @@ from PIL import Image
 
 DESTINO = Path(__file__).resolve().parent.parent / "img"
 
-# nombre original -> (ancho máximo, calidad). El ancho sale del tamaño
-# pintado más grande de cada foto x2 (pantallas retina).
+# nombre original -> (ancho máximo, calidad). El ancho cubre el tamaño
+# pintado más grande de cada foto a densidad 2-3 (pantallas retina).
 FOTOS = {
-    "pc_01.jpg": (640, 78),  # TikTok 9:16
-    "pc_02.jpg": (640, 78),
-    "pc_08.jpg": (640, 78),
-    "pc_07.jpg": (800, 76),  # promo + menú
-    "pc_12.jpg": (700, 76),  # tarjetas de menú
-    "pc_13.jpg": (700, 76),
-    "pc_14.jpg": (700, 76),
-    "pc_15.jpg": (700, 76),
-    "pc_16.jpg": (640, 78),
-    "pc_17.jpg": (700, 76),
-    "pc_20.jpg": (700, 76),
-    "pc_21.jpg": (700, 76),
-    "pc_22.jpg": (700, 76),
-    "pc_23.jpg": (700, 76),
-    "pc_25.jpg": (700, 76),
-    "pc_26.jpg": (700, 76),
-    "pc_27.jpg": (700, 76),
-    "pc_28.jpg": (700, 76),
-    "pc_31.jpg": (700, 76),
-    "pc_34.jpg": (700, 76),
-    "pc_35.jpg": (700, 76),
-    "pc_10.jpg": (1200, 74),  # foto del local, ubicación
+    "pc_01.jpg": (640, 82),  # TikTok 9:16 (los originales miden 640-720 de ancho)
+    "pc_02.jpg": (640, 82),
+    "pc_08.jpg": (720, 82),
+    "pc_07.jpg": (1000, 82),  # promo + menú
+    "pc_12.jpg": (1000, 82),  # tarjetas de menú
+    "pc_13.jpg": (1000, 82),
+    "pc_14.jpg": (1000, 82),
+    "pc_15.jpg": (1000, 82),
+    "pc_16.jpg": (640, 82),
+    "pc_17.jpg": (1000, 82),
+    "pc_20.jpg": (1000, 82),
+    "pc_21.jpg": (1000, 82),
+    "pc_22.jpg": (1000, 82),
+    "pc_23.jpg": (1000, 82),
+    "pc_25.jpg": (1000, 82),
+    "pc_26.jpg": (1000, 82),
+    "pc_27.jpg": (1000, 82),
+    "pc_28.jpg": (1000, 82),
+    "pc_31.jpg": (1000, 82),
+    "pc_34.jpg": (1000, 82),
+    "pc_35.jpg": (1000, 82),
+    "pc_10.jpg": (1600, 80),  # foto del local, ubicación
 }
 
 # Recortes de una parte del afiche: salida -> (original, caja en fracciones
 # (izq, arriba, der, abajo), ancho máximo, calidad). Sirven cuando un afiche
 # muestra dos productos y cada tarjeta del menú necesita el suyo.
 RECORTES = {
-    "pc_30-algodon.webp": ("pc_30.jpg", (0.0, 0.0, 0.48, 1.0), 700, 76),  # vaso pastel
+    "pc_30-algodon.webp": ("pc_30.jpg", (0.0, 0.0, 0.48, 1.0), 700, 82),  # vaso pastel
 }
 
 # Descartadas a propósito (no volver a usarlas):
