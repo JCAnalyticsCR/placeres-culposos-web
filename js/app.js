@@ -49,6 +49,7 @@ const PANDA_FELIZ = new Set(['fresas', 'ubicacion']);
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const conParallax = window.matchMedia('(min-width: 768px)');
 const escritorio = window.matchMedia('(min-width: 860px)');
+const sinHover = window.matchMedia('(hover: none)');
 // La vista fija del vaso necesita alto: en teléfonos acostados no se fija.
 const puedeFijar = window.matchMedia('(min-height: 600px)');
 
@@ -95,10 +96,22 @@ function initMenu() {
       li.style.setProperty('--i', String(i));
       chips.append(li);
     });
+    // En pantallas táctiles, tocar la foto (o el botón "i") muestra u oculta
+    // los ingredientes; solo una tarjeta abierta a la vez.
     const info = card.querySelector('.card__info');
-    info.addEventListener('click', () => {
-      const abierta = card.classList.toggle('is-open');
+    const alternar = () => {
+      const abierta = !card.classList.contains('is-open');
+      document.querySelectorAll('.card.is-open').forEach((otra) => {
+        otra.classList.remove('is-open');
+        otra.querySelector('.card__info').setAttribute('aria-expanded', 'false');
+      });
+      card.classList.toggle('is-open', abierta);
       info.setAttribute('aria-expanded', String(abierta));
+      if (!abierta) card.blur();
+    };
+    info.addEventListener('click', (e) => { e.stopPropagation(); alternar(); });
+    card.querySelector('.card__media').addEventListener('click', () => {
+      if (sinHover.matches) alternar();
     });
     return card;
   });

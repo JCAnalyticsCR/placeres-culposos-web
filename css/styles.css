@@ -330,10 +330,17 @@ html:has(.drawer[open]) { overflow: hidden; }
   transition: opacity var(--dur-micro), transform var(--dur-micro) var(--ease-build);
   transition-delay: calc(var(--i, 0) * 45ms);
 }
-.card.is-open .card__ing,
-.card:focus-within .card__ing { transform: none; }
-.card.is-open .chips li,
-.card:focus-within .chips li { opacity: 1; transform: none; }
+.card.is-open .card__ing { transform: none; }
+.card.is-open .chips li { opacity: 1; transform: none; }
+/* Con teclado (donde hay puntero) el foco también abre el panel; en táctil
+   manda solo el toque, para que el segundo toque lo cierre. */
+@media (hover: hover) {
+  .card:focus-within .card__ing { transform: none; }
+  .card:focus-within .chips li { opacity: 1; transform: none; }
+}
+@media (hover: none) {
+  .card__media { cursor: pointer; }
+}
 @media (hover: hover) {
   .card:hover .card__ing { transform: none; }
   .card:hover .chips li { opacity: 1; transform: none; }
