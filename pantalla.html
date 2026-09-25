@@ -11,55 +11,117 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/pantalla.css?v=20260924r">
-<script src="js/pantalla.js?v=20260924r" defer></script>
+<link rel="stylesheet" href="css/pantalla.css?v=20260925c">
+<link rel="stylesheet" href="css/tv-horizontal.css?v=20260925c">
+<link rel="stylesheet" href="css/tv-vertical.css?v=20260925c">
+<link rel="stylesheet" href="css/tv-extras.css?v=20260925c">
+<link rel="stylesheet" href="css/tv-movimiento.css?v=20260925c">
+<script src="js/datos.js?v=20260925c" defer></script>
+<script src="js/pantalla.js?v=20260925c" defer></script>
 </head>
-<!-- Pantalla del local, concepto "Póster Bold": un lienzo de 1920x1080 que se
-     escala para llenar cualquier pantalla. Rota los afiches solo; mover el
-     mouse o tocar muestra el panel de control. Ver README ("Pantalla del local"). -->
+<!-- Pantalla del local. Dos formatos sobre lienzos fijos que se escalan para
+     llenar la pantalla:
+       Horizontal 1920x1080 · "Póster Bold": afiches de promos y productos.
+       Vertical   1080x1920 · "Catálogo": afiche destacado arriba y el menú
+                               por categoría abajo, para la TV de pie.
+     El formato se elige en el panel (Automático / Horizontal / Vertical) o
+     con ?o=h / ?o=v. Ver README ("Pantalla del local"). -->
 <body>
 
 <div class="lienzo-marco" id="marco">
   <div class="lienzo" id="lienzo">
 
-    <div class="afiches" id="afiches" aria-live="off"></div>
+    <!-- ================= HORIZONTAL · PÓSTER BOLD ================= -->
+    <div class="formato formato--h">
+      <div class="afiches" id="afiches-h" aria-live="off"></div>
 
-    <header class="barra">
-      <div class="barra__marca">
-        <img src="img/logo.webp" width="192" height="192" alt="Placeres Culposos">
-        <span>Placeres Culposos</span>
-      </div>
-      <div class="barra__der">
-        <div class="estado"><span class="estado__punto"></span><span id="estado">Abierto ahora · hasta 9 p. m.</span></div>
-        <div class="reloj"><span id="hora">0:00</span><span id="ampm">p. m.</span></div>
-      </div>
-    </header>
+      <header class="barra">
+        <div class="barra__marca">
+          <img src="img/logo.webp" width="192" height="192" alt="Placeres Culposos">
+          <span>Placeres Culposos</span>
+        </div>
+        <div class="barra__der">
+          <div class="estado"><span class="estado__punto"></span><span class="js-estado">Abierto ahora · hasta 9 p. m.</span></div>
+          <div class="reloj"><span class="reloj__h js-hora">0:00</span><span class="reloj__ap js-ampm">p. m.</span></div>
+        </div>
+      </header>
 
-    <div class="qr" id="qr">
-      <img src="img/qr-whatsapp.svg" width="312" height="312" alt="QR para pedir por WhatsApp">
-      <div>
-        <b>Pedí desde la mesa</b>
-        <span>Escaneá y escribinos por WhatsApp · @placeresculpososcr</span>
+      <div class="panda js-panda">
+        <div class="panda__sombra"></div>
+        <div class="panda__circulo"><img class="js-panda-img" src="img/panda-happy.webp" width="330" height="290" alt=""></div>
+        <div class="panda__aro"></div>
+        <div class="panda__burbuja js-burbuja">¡2x en fresas!</div>
       </div>
+
+      <footer class="cinta">
+        <div class="cinta__progreso js-progreso"></div>
+        <div class="cinta__track">
+          <span>CAFÉ ★ CREPES ★ BINGSU ★ CHAPATAZO ★ PEDÍ AL 6456 4841 ★ FRESAS CON CREMA ★ BUBBLE TEA ★ MANGONADAS ★ FRAPPÉS ★</span>
+          <span>CAFÉ ★ CREPES ★ BINGSU ★ CHAPATAZO ★ PEDÍ AL 6456 4841 ★ FRESAS CON CREMA ★ BUBBLE TEA ★ MANGONADAS ★ FRAPPÉS ★</span>
+        </div>
+      </footer>
     </div>
 
-    <div class="panda" id="panda">
-      <div class="panda__sombra"></div>
-      <div class="panda__circulo"><img id="panda-img" src="img/panda-happy.webp" width="330" height="290" alt=""></div>
-      <div class="panda__aro"></div>
-      <div class="panda__burbuja" id="burbuja">¡2x en fresas!</div>
-    </div>
+    <!-- ================= VERTICAL · CATÁLOGO ================= -->
+    <div class="formato formato--v">
+      <header class="vbarra">
+        <div class="barra__marca">
+          <img src="img/logo.webp" width="192" height="192" alt="Placeres Culposos">
+          <span>Placeres<br>Culposos</span>
+        </div>
+        <div class="vbarra__der">
+          <div class="reloj"><span class="reloj__h js-hora">0:00</span><span class="reloj__ap js-ampm">p. m.</span></div>
+          <div class="estado"><span class="estado__punto"></span><span class="js-estado">Abierto ahora · hasta 9 p. m.</span></div>
+        </div>
+      </header>
 
-    <footer class="cinta">
-      <div class="cinta__progreso" id="progreso"></div>
-      <div class="cinta__track">
-        <span>CAFÉ ★ CREPES ★ BINGSU ★ CHAPATAZO ★ PEDÍ AL 6456 4841 ★ FRESAS CON CREMA ★ BUBBLE TEA ★ MANGONADAS ★ FRAPPÉS ★</span>
-        <span>CAFÉ ★ CREPES ★ BINGSU ★ CHAPATAZO ★ PEDÍ AL 6456 4841 ★ FRESAS CON CREMA ★ BUBBLE TEA ★ MANGONADAS ★ FRAPPÉS ★</span>
+      <!-- Afiche destacado: las mismas promos/productos del horizontal. -->
+      <section class="vdestacado">
+        <div class="vafiches" id="afiches-v" aria-live="off"></div>
+        <div class="panda panda--v js-panda">
+          <div class="panda__sombra"></div>
+          <div class="panda__circulo"><img class="js-panda-img" src="img/panda-happy.webp" width="330" height="290" alt=""></div>
+          <div class="panda__aro"></div>
+          <div class="panda__burbuja js-burbuja">¡2x en fresas!</div>
+        </div>
+      </section>
+
+      <!-- Catálogo: una categoría del menú a la vez, con foto y precio. -->
+      <section class="vcatalogo">
+        <div class="vcatalogo__head">
+          <div>
+            <div class="vcatalogo__k">Nuestro menú · precios en colones</div>
+            <h2 class="vcatalogo__titulo" id="cat-titulo">Fresas con crema</h2>
+          </div>
+          <div class="vcatalogo__puntos" id="cat-puntos"></div>
+        </div>
+        <div class="vcatalogo__grid" id="cat-grid"></div>
+      </section>
+
+      <div class="vqr">
+        <img src="img/qr-whatsapp.svg" width="312" height="312" alt="QR para pedir por WhatsApp">
+        <div>
+          <b>Pedí desde la mesa</b>
+          <span>Escaneá y escribinos por WhatsApp</span>
+        </div>
+        <div class="vqr__handle">@placeresculpososcr</div>
       </div>
-    </footer>
+
+      <footer class="cinta">
+        <div class="cinta__progreso js-progreso"></div>
+        <div class="cinta__track">
+          <span>FRESAS CON CREMA ★ BUBBLE TEA ★ MANGONADAS ★ FRAPPÉS ★ CAFÉ ★ CREPES ★ BINGSU ★ CHAPATAZO ★ PEDÍ AL 6456 4841 ★</span>
+          <span>FRESAS CON CREMA ★ BUBBLE TEA ★ MANGONADAS ★ FRAPPÉS ★ CAFÉ ★ CREPES ★ BINGSU ★ CHAPATAZO ★ PEDÍ AL 6456 4841 ★</span>
+        </div>
+      </footer>
+    </div>
 
     <!-- Panel de control: aparece al mover el mouse o tocar, se oculta a los 3,5 s. -->
     <div class="panel" id="panel">
+      <div class="panel__fila">
+        <span class="panel__k">Formato</span>
+        <div class="panel__grupo" id="formatos"></div>
+      </div>
       <div class="panel__fila">
         <span class="panel__k">Mostrar</span>
         <div class="panel__grupo" id="filtros"></div>
@@ -70,7 +132,7 @@
         <button type="button" data-accion="next" aria-label="Afiche siguiente">▶</button>
         <button type="button" data-accion="pausa" id="btn-pausa">Pausa</button>
         <button type="button" data-accion="full" class="panel__full">Pantalla completa</button>
-        <span class="panel__ayuda">Teclas: ← → · Espacio pausa · F</span>
+        <span class="panel__ayuda">Teclas: ← → · Espacio pausa · F · V formato</span>
       </div>
     </div>
 
@@ -78,13 +140,14 @@
 </div>
 
 <!-- Cortina de bienvenida: el toque en "Iniciar" es el gesto que el navegador
-     exige para entrar a pantalla completa. ?auto la salta. -->
+     exige para entrar a pantalla completa. Se elige el formato antes. ?auto la salta. -->
 <div class="cortina" id="cortina">
   <img class="cortina__logo" src="img/logo.webp" width="192" height="192" alt="">
   <h1 class="cortina__titulo">Modo presentación</h1>
-  <p class="cortina__texto">Promos, menú, hora y QR, rotando solos para la pantalla del local.</p>
+  <p class="cortina__texto">Elegí cómo está puesta esta pantalla:</p>
+  <div class="cortina__formatos" id="cortina-formatos"></div>
   <button class="cortina__btn" id="btn-iniciar" type="button">▶ Iniciar en pantalla completa</button>
-  <p class="cortina__nota">También con la tecla F · Esc para salir</p>
+  <p class="cortina__nota">También con la tecla F · Esc para salir · Mové el mouse para ver el panel</p>
   <a class="cortina__volver" href="index.html">← Volver a la página</a>
 </div>
 

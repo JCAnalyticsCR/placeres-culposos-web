@@ -1,12 +1,15 @@
-/* Pantalla del local — concepto "Póster Bold".
-   Rota los afiches solos. Mover el mouse o tocar muestra el panel (qué
-   mostrar, anterior/siguiente, pausa, pantalla completa); cada TV recuerda
-   su elección en el navegador.
+/* Pantalla del local.
+   Dos formatos: Horizontal "Póster Bold" (afiches de promos y productos) y
+   Vertical "Catálogo" (afiche destacado arriba + menú por categoría abajo,
+   para la TV de pie). Rotan solos. Mover el mouse o tocar muestra el panel
+   (formato, qué mostrar, anterior/siguiente, pausa, pantalla completa);
+   cada TV recuerda sus elecciones en el navegador.
    Parámetros en la URL:
+     ?o=h | v | auto   formato (por defecto: el guardado, o automático)
      ?m=promos | fresas | bebidas | postres | todo   qué afiches mostrar
-     ?seg=10   segundos por afiche (por defecto 8)
-     ?auto     salta la cortina de bienvenida
-   Teclas: ← → cambiar afiche · Espacio pausa · F pantalla completa. */
+     ?seg=10           segundos por afiche (por defecto 8)
+     ?auto             salta la cortina de bienvenida
+   Teclas: ← → cambiar afiche · Espacio pausa · F pantalla completa · V formato. */
 
 'use strict';
 
@@ -35,42 +38,80 @@ const FILTROS = [
   { id: 'postres', label: 'Postres y salado', ok: (a) => a.cat === 'postres' || a.cat === 'salado' },
 ];
 
+const FORMATOS = [
+  { id: 'auto', label: 'Automático', nota: 'según la pantalla' },
+  { id: 'h', label: 'Horizontal', nota: 'afiches' },
+  { id: 'v', label: 'Vertical', nota: 'catálogo · TV de pie' },
+];
+
 // PENDIENTE: horario real del cliente (marcador del diseño: 1 a 9 p. m.).
 const HORARIO = { abre: 13, cierra: 21 };
 const CLAVE = 'pc-pantalla-vip';
 
 const params = new URLSearchParams(location.search);
 const SEG = Math.max(4, Number(params.get('seg')) || 8);
+// El catálogo cambia de categoría más despacio que los afiches: se lee más.
+const SEG_CAT = Math.round(SEG * 1.5);
 
 const $ = (id) => document.getElementById(id);
+const $$ = (sel) => document.querySelectorAll(sel);
 const lienzo = $('lienzo');
 const marco = $('marco');
-const contAfiches = $('afiches');
 
-let filtro = elegirFiltroInicial();
+const guardado = leer();
+let filtro = elegirFiltro();
+let formato = elegirFormato();
 let lista = [];
-let nodos = [];
+let nodosH = [];
+let nodosV = [];
 let i = 0;
 let inicio = Date.now();
 let pausado = false;
 
-function elegirFiltroInicial() {
+let categorias = [];
+let c = 0;
+let inicioCat = Date.now();
+
+function leer() {
+  try { return JSON.parse(localStorage.getItem(CLAVE) || '{}'); } catch (e) { return {}; }
+}
+function guardar() {
+  try { localStorage.setItem(CLAVE, JSON.stringify({ filtro, formato })); } catch (e) { /* sin almacenamiento */ }
+}
+function elegirFiltro() {
   const q = (params.get('m') || '').toLowerCase();
   if (q) return (FILTROS.find((f) => f.id.startsWith(q)) || FILTROS[0]).id;
-  try { return JSON.parse(localStorage.getItem(CLAVE) || '{}').filtro || 'todo'; } catch (e) { return 'todo'; }
+  return guardado.filtro || 'todo';
+}
+function elegirFormato() {
+  const q = (params.get('o') || '').toLowerCase();
+  if (FORMATOS.some((f) => f.id === q)) return q;
+  return FORMATOS.some((f) => f.id === guardado.formato) ? guardado.formato : 'auto';
 }
 
-function guardar() {
-  try { localStorage.setItem(CLAVE, JSON.stringify({ filtro })); } catch (e) { /* sin almacenamiento */ }
-}
+/* ---------- Formato y escala ---------- */
 
-/* ---------- Escala: el lienzo de 1920x1080 llena la pantalla ---------- */
+function esVertical() {
+  if (formato === 'v') return true;
+  if (formato === 'h') return false;
+  return (innerHeight || 1080) > (innerWidth || 1920);
+}
 
 function ajustar() {
-  const w = innerWidth || document.documentElement.clientWidth || 1920;
-  const h = innerHeight || document.documentElement.clientHeight || 1080;
-  const s = Math.min(w / 1920, h / 1080);
+  const vertical = esVertical();
+  lienzo.classList.toggle('is-v', vertical);
+  const base = vertical ? [1080, 1920] : [1920, 1080];
+  const w = innerWidth || document.documentElement.clientWidth || base[0];
+  const h = innerHeight || document.documentElement.clientHeight || base[1];
+  const s = Math.min(w / base[0], h / base[1]);
   lienzo.style.setProperty('--sc', String(Number.isFinite(s) && s > 0 ? s : 1));
+}
+
+function cambiarFormato(id) {
+  formato = id;
+  guardar();
+  ajustar();
+  pintarBotones();
 }
 
 /* ---------- Afiches ---------- */
@@ -82,23 +123,27 @@ function el(tag, clase, texto) {
   return n;
 }
 
-function tamNombre(a) {
+function tamNombre(a, vertical) {
   const n = a.name.length;
+  if (vertical) {
+    if (a.pre) return n > 14 ? 64 : 78;
+    return n > 20 ? 72 : n > 12 ? 92 : 120;
+  }
   if (a.pre) return n > 14 ? 96 : 116;
-  return n > 20 ? 118 : n > 12 ? 150 : 190;
+  return n > 20 ? 110 : n > 12 ? 130 : 170;
 }
 
-function crearAfiche(a) {
-  const s = el('section', 'afiche');
+function crearAfiche(a, vertical) {
+  const s = el('section', vertical ? 'vafiche' : 'afiche');
   const fondo = el('div', 'afiche__fondo');
   const linea = `${a.word} ★ `.repeat(8);
-  for (let k = 0; k < 5; k += 1) fondo.append(el('div', '', linea));
+  for (let k = 0; k < (vertical ? 4 : 5); k += 1) fondo.append(el('div', '', linea));
 
   const texto = el('div', 'afiche__texto');
   texto.append(el('div', 'afiche__kicker', a.kicker || 'Promo del mes · Solo en el local'));
   if (a.pre) texto.append(el('div', 'afiche__pre', a.pre));
   const nombre = el('div', 'afiche__nombre', a.name);
-  nombre.style.fontSize = `${tamNombre(a)}px`;
+  nombre.style.fontSize = `${tamNombre(a, vertical)}px`;
   texto.append(nombre, el('div', 'afiche__sub', a.sub));
   if (a.price) texto.append(el('div', 'afiche__precio', a.price));
 
@@ -119,20 +164,22 @@ function armar() {
   const f = FILTROS.find((x) => x.id === filtro) || FILTROS[0];
   lista = AFICHES.filter(f.ok);
   if (!lista.length) lista = AFICHES;
-  contAfiches.textContent = '';
-  nodos = lista.map(crearAfiche);
-  contAfiches.append(...nodos);
+  nodosH = lista.map((a) => crearAfiche(a, false));
+  nodosV = lista.map((a) => crearAfiche(a, true));
+  $('afiches-h').replaceChildren(...nodosH);
+  $('afiches-v').replaceChildren(...nodosV);
   i = 0;
   mostrar();
-  pintarFiltros();
+  pintarBotones();
 }
 
 function mostrar() {
-  nodos.forEach((n, k) => n.classList.toggle('is-on', k === i));
+  nodosH.forEach((n, k) => n.classList.toggle('is-on', k === i));
+  nodosV.forEach((n, k) => n.classList.toggle('is-on', k === i));
   const a = lista[i];
-  $('panda').classList.toggle('is-tea', a.panda === 'tea');
-  $('panda-img').src = `img/panda-${a.panda}.webp`;
-  $('burbuja').textContent = a.bubble;
+  $$('.js-panda').forEach((p) => p.classList.toggle('is-tea', a.panda === 'tea'));
+  $$('.js-panda-img').forEach((img) => { img.src = `img/panda-${a.panda}.webp`; });
+  $$('.js-burbuja').forEach((b) => { b.textContent = a.bubble; });
   inicio = Date.now();
 }
 
@@ -142,24 +189,76 @@ function paso(d) {
   mostrar();
 }
 
+/* ---------- Catálogo (vertical): el menú de datos.js por categoría ---------- */
+
+function armarCatalogo() {
+  const menu = typeof MENU !== 'undefined' ? MENU : [];
+  const cats = [...new Set(menu.map((m) => m.cat))];
+  categorias = cats.map((cat) => ({ cat, items: menu.filter((m) => m.cat === cat).slice(0, 6) }));
+  $('cat-puntos').replaceChildren(...categorias.map(() => el('span')));
+  c = 0;
+  pintarCategoria();
+}
+
+function pintarCategoria() {
+  if (!categorias.length) return;
+  const { cat, items } = categorias[c];
+  $('cat-titulo').textContent = cat;
+  $('cat-grid').replaceChildren(...items.map((it) => {
+    const card = el('article', 'vitem' + (it.img ? '' : ' sin-foto'));
+    const foto = el('div', 'vitem__foto');
+    const img = el('img');
+    img.alt = '';
+    img.decoding = 'async';
+    if (it.img) {
+      img.src = `img/${it.img}.webp`;
+      img.style.objectPosition = it.pos;
+    } else {
+      img.src = 'img/panda-tea.webp';
+    }
+    foto.append(img);
+    const body = el('div', 'vitem__body');
+    body.append(el('div', 'vitem__nombre', it.name), el('div', 'vitem__desc', it.desc), el('div', 'vitem__precio', it.price));
+    card.append(foto, body);
+    return card;
+  }));
+  [...$('cat-puntos').children].forEach((p, k) => p.classList.toggle('is-on', k === c));
+  inicioCat = Date.now();
+}
+
+function siguienteCategoria() {
+  const cont = document.querySelector('.vcatalogo');
+  cont.classList.add('is-cambio');
+  setTimeout(() => {
+    c = (c + 1) % categorias.length;
+    pintarCategoria();
+    cont.classList.remove('is-cambio');
+  }, 450);
+  inicioCat = Date.now();
+}
+
 /* ---------- Reloj, estado y progreso ---------- */
 
 function tick() {
   const ahora = new Date();
   const h = ahora.getHours();
-  $('hora').textContent = `${h % 12 || 12}:${String(ahora.getMinutes()).padStart(2, '0')}`;
-  $('ampm').textContent = h < 12 ? 'a. m.' : 'p. m.';
+  const hora = `${h % 12 || 12}:${String(ahora.getMinutes()).padStart(2, '0')}`;
+  const ap = h < 12 ? 'a. m.' : 'p. m.';
   const abierto = h >= HORARIO.abre && h < HORARIO.cierra;
-  $('estado').textContent = abierto
+  const estado = abierto
     ? `Abierto ahora · hasta ${HORARIO.cierra - 12} p. m.`
     : `Hoy abrimos · ${HORARIO.abre - 12} a ${HORARIO.cierra - 12} p. m.`;
+  $$('.js-hora').forEach((n) => { n.textContent = hora; });
+  $$('.js-ampm').forEach((n) => { n.textContent = ap; });
+  $$('.js-estado').forEach((n) => { n.textContent = estado; });
 
   const avance = pausado ? 0 : Math.min(1, (Date.now() - inicio) / (SEG * 1000));
-  $('progreso').style.width = `${avance * 100}%`;
+  $$('.js-progreso').forEach((n) => { n.style.width = `${avance * 100}%`; });
   if (!pausado && avance >= 1) paso(1);
+  if (!pausado && lienzo.classList.contains('is-v') && Date.now() - inicioCat >= SEG_CAT * 1000) siguienteCategoria();
 }
 
-/* ---------- Panel de control ---------- */
+/* ---------- Panel de control y cortina ---------- */
 
 let dormir = 0;
 function despertar() {
@@ -172,21 +271,26 @@ function despertar() {
   }, 3500);
 }
 
-function pintarFiltros() {
-  const cont = $('filtros');
-  cont.textContent = '';
-  FILTROS.forEach((f) => {
-    const b = el('button', '', f.label);
-    b.type = 'button';
-    b.setAttribute('aria-pressed', String(f.id === filtro));
-    b.addEventListener('click', () => { filtro = f.id; guardar(); armar(); });
-    cont.append(b);
-  });
+function boton(texto, activo, alHacerClic, nota) {
+  const b = el('button', '', texto);
+  b.type = 'button';
+  if (nota) b.append(el('small', '', nota));
+  b.setAttribute('aria-pressed', String(activo));
+  b.addEventListener('click', (e) => { e.stopPropagation(); alHacerClic(); });
+  return b;
+}
+
+function pintarBotones() {
+  $('filtros').replaceChildren(...FILTROS.map((f) => boton(f.label, f.id === filtro, () => { filtro = f.id; guardar(); armar(); })));
+  $('formatos').replaceChildren(...FORMATOS.map((f) => boton(f.label, f.id === formato, () => cambiarFormato(f.id))));
+  const cf = $('cortina-formatos');
+  if (cf) cf.replaceChildren(...FORMATOS.map((f) => boton(f.label, f.id === formato, () => cambiarFormato(f.id), f.nota)));
 }
 
 function alternarPausa() {
   pausado = !pausado;
   inicio = Date.now();
+  inicioCat = Date.now();
   $('btn-pausa').textContent = pausado ? 'Reanudar' : 'Pausa';
 }
 
@@ -213,6 +317,10 @@ function initControles() {
     else if (e.key === 'ArrowLeft') paso(-1);
     else if (e.key === ' ') { e.preventDefault(); alternarPausa(); }
     else if (e.key === 'f' || e.key === 'F') pantallaCompleta();
+    else if (e.key === 'v' || e.key === 'V') {
+      const k = FORMATOS.findIndex((f) => f.id === formato);
+      cambiarFormato(FORMATOS[(k + 1) % FORMATOS.length].id);
+    }
   });
 
   const cortina = $('cortina');
@@ -224,6 +332,7 @@ function initControles() {
       cortina.classList.add('is-out');
       setTimeout(() => cortina.remove(), 700);
       inicio = Date.now();
+      inicioCat = Date.now();
     });
   }
 }
@@ -232,6 +341,7 @@ ajustar();
 addEventListener('resize', ajustar);
 if ('ResizeObserver' in window) new ResizeObserver(ajustar).observe(document.documentElement);
 armar();
+armarCatalogo();
 initControles();
 tick();
 setInterval(tick, 250);
