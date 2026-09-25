@@ -739,19 +739,18 @@ html:has(.drawer[open]) { overflow: hidden; }
 /* Ocupa toda la fila y deja aire a la derecha: ahí flota el panda. */
 .footer__copy { grid-column: 1 / -1; padding-right: clamp(140px, 16vw, 200px); font-size: 12px; text-transform: uppercase; letter-spacing: .1em; opacity: .7; }
 
-/* Crédito al final de todo, en el mismo azul del logo. */
+/* Crédito al final: una línea discreta, mismo fondo que el footer. */
 .credito {
-  display: flex; align-items: center; justify-content: center; gap: 12px;
-  margin: 0; padding: 16px var(--gutter) calc(96px + env(safe-area-inset-bottom, 0px));
-  background: #0B1424; color: rgba(255, 255, 255, .75);
-  font-size: 12px; text-transform: uppercase; letter-spacing: .12em;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin: 0; padding: 0 var(--gutter) calc(88px + env(safe-area-inset-bottom, 0px));
+  background: var(--petroleo); color: rgba(255, 255, 255, .55);
+  font-size: 11px; text-transform: uppercase; letter-spacing: .12em;
 }
-.credito img { height: 34px; width: auto; }
+.credito a { display: flex; }
+.credito img { height: 20px; width: auto; opacity: .85; }
 .credito a:hover { opacity: 1; }
-/* En teléfono el panda flota a la derecha: el crédito se va a la izquierda. */
-@media (max-width: 859.98px) { .credito { justify-content: flex-start; padding-right: clamp(140px, 40vw, 200px); } }
-/* El aire para el botón flotante ahora lo pone el crédito. */
-.footer { padding-bottom: 40px; }
+.credito a:hover img { opacity: 1; }
+.footer { padding-bottom: 28px; }
 
 /* ---------- Elementos fijos ---------- */
 
