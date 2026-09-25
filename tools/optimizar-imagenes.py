@@ -38,6 +38,7 @@ FOTOS = {
     "pc_26.jpg": (1000, 82),
     "pc_27.jpg": (1000, 82),
     "pc_28.jpg": (1000, 82),
+    "pc_30.jpg": (1000, 82),  # pantalla del local (promo 2x milkshakes)
     "pc_31.jpg": (1000, 82),
     "pc_34.jpg": (1000, 82),
     "pc_35.jpg": (1000, 82),

@@ -1,5 +1,5 @@
-/* Placeres Culposos CR — datos compartidos por la landing (app.js) y la
-   pantalla del local (pantalla.js). Se carga antes que ambos. */
+/* Placeres Culposos CR — datos del menú de la landing (app.js). Se carga
+   antes que app.js. La pantalla del local tiene sus afiches en pantalla.js. */
 
 'use strict';
 
@@ -38,23 +38,4 @@ const MENU = [
   { cat: 'Postres', name: 'Crepes dulces', desc: 'Nutella, fresa o banano', price: '₡2.500', img: 'pc_20', pos: '50% 0%', ing: ['Crepe', 'Nutella, fresa o banano', 'Crema batida'] },
   { cat: 'Salado', name: 'Chapatazo', desc: 'Pollo, jamón o mixto', price: '₡3.500', img: 'pc_23', pos: '50% 50%', ing: ['Pan chapata', 'Pollo, jamón o mixto', 'Queso', 'Vegetales'] },
   { cat: 'Salado', name: 'Dim sum', desc: '6 unidades al vapor', price: '₡3.000', img: null, pos: null, ing: ['Masa al vapor', 'Relleno de cerdo o pollo'] },
-];
-
-/* Promos del mes: las mismas del carrusel de la landing (index.html); la
-   pantalla del local las muestra a tamaño completo. PENDIENTE: validar. */
-const PROMOS = [
-  { big: '2x', name: 'Fresas con crema', note: 'tradicionales', price: '₡4.000', tono: 'dark' },
-  { big: '2x', name: 'Milkshakes medianos', note: 'por solo', price: '₡4.500', tono: 'white' },
-  { big: '2x', name: 'Ensalada de frutas', note: 'por solo', price: '₡5.000', tono: 'yellow' },
-  { big: '2x', name: 'Bubble Tea', note: 'por solo', price: '₡5.000', tono: 'teal' },
-];
-
-/* Fotos de redes para la franja de la pantalla (mismas de "En redes"). */
-const FOTOS_REDES = [
-  { img: 'pc_31', red: 'Instagram', alt: 'Frappé de Nutella' },
-  { img: 'pc_20', red: 'TikTok', alt: 'Crepes dulces' },
-  { img: 'pc_23', red: 'Facebook', alt: 'Chapatazo' },
-  { img: 'pc_25', red: 'Instagram', alt: 'Fresas rosadas con chocolate' },
-  { img: 'pc_35', red: 'TikTok', alt: 'Bubble tea de fresa' },
-  { img: 'pc_08', red: 'TikTok', alt: 'Mamá e hijo con fresas con crema' },
 ];

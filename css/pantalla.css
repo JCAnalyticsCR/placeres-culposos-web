@@ -1,268 +1,210 @@
-/* Pantalla del local — señalización digital para TV de 32" (1920x1080).
-   Todo escala con el tamaño de la pantalla (vw/vh), sin scroll, sin cursor.
-   Misma paleta y tipografía de la landing. Con body.tv--vertical (?v=1) la
-   franja lateral pasa arriba y las diapositivas ocupan el resto. */
+/* Pantalla del local — concepto "Póster Bold".
+   Todo se diseña sobre un lienzo fijo de 1920x1080 px que pantalla.js escala
+   (--sc) para llenar la pantalla sin deformarse; lo que sobra queda negro.
+   Así la composición es idéntica en una TV de 32", un monitor o una laptop. */
 
 :root {
-  --magenta: #E3257B; --magenta-oscuro: #C2185B; --petroleo: #1F3A4A;
-  --turquesa: #2FB3A6; --turquesa-claro: #7FE0D5; --rosa: #FCE3EE;
-  --amarillo: #F5D24A; --gris: #4E6472; --blanco: #FFFFFF; --whatsapp: #25D366;
+  --magenta: #E3257B; --petroleo: #1F3A4A; --amarillo: #F5D24A;
+  --rosa: #FCE3EE; --turquesa-claro: #7FE0D5; --blanco: #FFFFFF;
   --font-display: Anton, Impact, "Arial Narrow", sans-serif;
   --font-body: Poppins, system-ui, sans-serif;
-  --lado: 30vw;            /* ancho de la franja lateral en horizontal */
-  --cinta: 5.2vh;          /* alto de la cinta inferior */
-  --dur-slide: .9s;
   --ease: cubic-bezier(.2, .8, .2, 1);
+  --rebote: cubic-bezier(.3, 1.6, .4, 1);
+  --sc: 1;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; overflow: hidden; }
-body {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--lado);
-  grid-template-rows: minmax(0, 1fr) var(--cinta);
-  background: var(--magenta); color: var(--blanco);
-  font-family: var(--font-body);
-  cursor: none;
-}
-img { display: block; max-width: 100%; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+body { font-family: var(--font-body); color: var(--blanco); }
+img { display: block; }
+button { font: inherit; }
 
-/* ---------- Escenario de diapositivas ---------- */
-
-.tv__escena { position: relative; overflow: hidden; }
-.slide {
-  position: absolute; inset: 0;
-  display: grid; align-items: center;
-  padding: 5vh 4vw;
-  opacity: 0; transform: translateX(6%) scale(.98);
-  transition: opacity var(--dur-slide) var(--ease), transform var(--dur-slide) var(--ease);
-  pointer-events: none;
-}
-.slide.is-on { opacity: 1; transform: none; z-index: 1; }
-/* La que sale se desvanece más rápido: así no se ve detrás de la que entra. */
-.slide.is-off { transform: translateX(-6%) scale(.98); transition-duration: .35s; }
-
-.kicker {
-  font-weight: 700; font-size: 1.7vh; letter-spacing: .25em; text-transform: uppercase;
-}
-.display {
-  margin: 0;
-  font-family: var(--font-display); line-height: .9; text-transform: uppercase;
+.lienzo-marco { position: fixed; inset: 0; overflow: hidden; background: #000; }
+.lienzo-marco.is-dormido { cursor: none; }
+.lienzo {
+  position: absolute; left: 50%; top: 50%;
+  width: 1920px; height: 1080px;
+  transform: translate(-50%, -50%) scale(var(--sc));
+  overflow: hidden; background: var(--magenta);
 }
 
-/* Promo: número gigante estilo afiche. */
-.slide--promo { grid-template-columns: 1fr; }
-.slide--promo .promo-card {
-  display: flex; flex-direction: column; justify-content: center; gap: 2vh;
-  min-height: 100%; padding: 6vh 5vw;
-  background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .06) 0 1.2vh, transparent 1.2vh 2.8vh);
-  box-shadow: 1.2vh 1.2vh 0 var(--petroleo);
+/* ---------- Afiches ---------- */
+
+.afiche { position: absolute; inset: 0; opacity: 0; transition: opacity .6s ease; }
+.afiche.is-on { opacity: 1; }
+
+/* Palabra gigante de fondo, cinco filas que corren en sentidos opuestos. */
+.afiche__fondo {
+  position: absolute; left: 0; right: 0; top: 110px;
+  font-family: var(--font-display); font-size: 190px; line-height: .9;
+  color: rgba(255, 255, 255, .09); text-transform: uppercase; white-space: nowrap;
 }
-.promo-card--dark { background-color: var(--petroleo); }
-.promo-card--dark .promo-card__big, .promo-card--dark .promo-card__price { color: var(--amarillo); }
-.promo-card--white { background-color: var(--blanco); color: var(--petroleo); background-image: repeating-linear-gradient(-45deg, rgba(31, 58, 74, .05) 0 1.2vh, transparent 1.2vh 2.8vh); }
-.promo-card--white .promo-card__big, .promo-card--white .promo-card__price { color: var(--magenta); }
-.promo-card--yellow { background-color: var(--amarillo); color: var(--petroleo); }
-.promo-card--teal { background-color: var(--turquesa); color: var(--petroleo); }
-.promo-card--teal .promo-card__big { color: var(--blanco); }
-.promo-card__big { font-size: 30vh; line-height: .85; transform: rotate(-4deg); transform-origin: left bottom; display: inline-block; }
-.promo-card__name { font-size: 9vh; }
-.promo-card__note { font-size: 3.2vh; font-weight: 600; opacity: .85; }
-.promo-card__price { font-family: var(--font-display); font-size: 7vh; }
-.promo-card__chip {
-  align-self: flex-start; padding: 1vh 1.6vw;
+.afiche__fondo div:nth-child(odd) { animation: marq 60s linear infinite; }
+.afiche__fondo div:nth-child(even) { animation: marqR 70s linear infinite; }
+.afiche__fondo div:nth-child(3) { animation-duration: 55s; }
+.afiche__fondo div:nth-child(4) { animation-duration: 65s; }
+.afiche__fondo div:nth-child(5) { animation-duration: 75s; }
+.afiche:not(.is-on) .afiche__fondo div { animation-play-state: paused; }
+@keyframes marq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes marqR { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+
+.afiche__texto {
+  position: absolute; left: 110px; top: 140px; width: 1060px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
+}
+.afiche__kicker {
+  padding: 12px 22px;
+  background: var(--petroleo); color: var(--amarillo);
+  font-weight: 700; font-size: 24px; letter-spacing: .2em; text-transform: uppercase;
+  opacity: 0; transform: translateX(-80px);
+  transition: transform .7s var(--ease), opacity .5s;
+}
+.afiche__pre {
+  font-family: var(--font-display); font-size: 260px; line-height: .82;
+  color: var(--amarillo); text-shadow: 12px 12px 0 var(--petroleo);
+  transform-origin: left bottom; transform: scale(.2) rotate(-4deg); opacity: 0;
+  transition: transform .8s var(--rebote), opacity .3s;
+}
+.afiche__nombre {
+  font-family: var(--font-display); line-height: .92; text-transform: uppercase;
+  text-shadow: 8px 8px 0 var(--petroleo); text-wrap: balance;
+  opacity: 0; transform: translateY(60px);
+  transition: transform .8s var(--ease), opacity .5s;
+}
+.afiche__sub {
+  max-width: 820px; font-weight: 500; font-size: 34px;
+  opacity: 0; transform: translateY(60px);
+  transition: transform .8s var(--ease), opacity .5s;
+}
+.afiche__precio {
+  margin-top: 8px; padding: 8px 30px 12px;
   background: var(--amarillo); color: var(--petroleo);
-  font-weight: 700; font-size: 1.9vh; letter-spacing: .15em; text-transform: uppercase;
+  font-family: var(--font-display); font-size: 90px; line-height: 1;
+  box-shadow: 10px 10px 0 var(--petroleo);
+  transform-origin: left center; transform: scale(.2) rotate(-2deg);
+  transition: transform .7s var(--rebote);
 }
-.promo-card--yellow .promo-card__chip { background: var(--petroleo); color: var(--amarillo); }
-
-/* Menú por categoría: cuadrícula de 4 productos con foto y precio. */
-.slide--menu { grid-template-rows: auto minmax(0, 1fr); gap: 3vh; align-items: stretch; }
-.slide--menu .display { font-size: 8.5vh; }
-.menu-tv { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2vw; min-height: 0; }
-.menu-tv__item {
-  display: flex; flex-direction: column;
-  background: var(--blanco); color: var(--petroleo);
-  box-shadow: .8vh .8vh 0 var(--petroleo);
-  min-height: 0;
+.afiche__foto {
+  position: absolute; left: 1236px; top: 96px; width: 592px; height: 740px;
+  overflow: hidden; background: var(--blanco);
+  border: 14px solid var(--blanco); box-shadow: 22px 22px 0 var(--petroleo);
+  opacity: 0; transform: translateX(320px) rotate(16deg);
+  transition: transform 1s var(--ease), opacity .5s;
 }
-.menu-tv__media { flex: 1 1 auto; min-height: 55%; background: var(--rosa); overflow: hidden; display: grid; place-items: center; }
-.menu-tv__body { flex: none; }
-.menu-tv__media img { width: 100%; height: 100%; object-fit: cover; }
-.menu-tv__item.sin-foto .menu-tv__media img { width: 55%; height: auto; }
-.menu-tv__body { padding: 1.8vh 1.2vw 2vh; }
-.menu-tv__name { font-family: var(--font-display); font-size: 3.4vh; line-height: 1; text-transform: uppercase; }
-.menu-tv__desc { font-size: 1.9vh; color: var(--gris); margin-top: .5vh; }
-.menu-tv__price { font-weight: 700; font-size: 3vh; color: var(--magenta-oscuro); margin-top: 1vh; }
+.afiche__foto img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.afiche__foto .borroso { object-fit: cover; filter: blur(24px) brightness(.9); transform: scale(1.2); }
+.afiche__foto .nitida { object-fit: contain; }
 
-/* Producto estrella: foto grande + nombre. */
-.slide--star { grid-template-columns: 1.1fr 1fr; gap: 3vw; }
-.slide--star .display { font-size: 12vh; text-shadow: 1vh 1vh 0 var(--petroleo); }
-.slide--star p { font-size: 3.2vh; font-weight: 500; margin: 2vh 0 0; max-width: 34vw; }
-.slide--star .precio { font-family: var(--font-display); font-size: 9vh; color: var(--amarillo); margin-top: 2vh; }
-.slide--star figure { margin: 0; height: 100%; min-height: 0; box-shadow: 1.2vh 1.2vh 0 var(--petroleo); overflow: hidden; }
-.slide--star figure img { width: 100%; height: 100%; object-fit: cover; }
+/* Entrada escalonada del afiche activo. */
+.afiche.is-on .afiche__kicker { opacity: 1; transform: none; transition-delay: .22s; }
+.afiche.is-on .afiche__pre { opacity: 1; transform: scale(1) rotate(-4deg); transition-delay: .34s; }
+.afiche.is-on .afiche__nombre { opacity: 1; transform: none; transition-delay: .46s; }
+.afiche.is-on .afiche__sub { opacity: 1; transform: none; transition-delay: .58s; }
+.afiche.is-on .afiche__precio { transform: scale(1) rotate(-2deg); transition-delay: .7s; }
+.afiche.is-on .afiche__foto { opacity: 1; transform: rotate(2deg); transition-delay: .34s; }
 
-/* Redes: invitación a seguir + QR grande. */
-.slide--redes { grid-template-columns: 1fr auto; gap: 3vw; }
-.slide--redes .display { font-size: 11vh; }
-.slide--redes .display span { color: var(--amarillo); }
-.slide--redes .pills { display: flex; gap: 1vw; margin-top: 3vh; flex-wrap: wrap; }
-.slide--redes .pills span {
-  padding: 1.4vh 1.6vw; border: .5vh solid var(--blanco);
-  font-weight: 700; font-size: 2.4vh; letter-spacing: .12em; text-transform: uppercase;
+/* ---------- Barra superior ---------- */
+
+.barra {
+  position: absolute; left: 0; right: 0; top: 0; height: 120px; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 60px 0 50px;
 }
-.slide--redes .qr-big { background: var(--blanco); padding: 2vh; box-shadow: 1.2vh 1.2vh 0 var(--petroleo); }
-.slide--redes .qr-big img { width: 42vh; height: 42vh; }
-.slide--redes .qr-big b { display: block; color: var(--petroleo); font-family: var(--font-display); font-size: 3.2vh; text-transform: uppercase; text-align: center; margin-top: 1.5vh; }
-
-/* ---------- Franja lateral ---------- */
-
-.tv__lado {
-  position: relative; overflow: hidden;
-  display: flex; flex-direction: column; gap: 2.4vh;
-  padding: 3.5vh 2vw;
-  background: var(--petroleo);
-  border-left: .6vh solid var(--amarillo);
-}
-.reloj__hora { display: flex; align-items: baseline; gap: 1vw; font-family: var(--font-display); font-size: 12vh; line-height: 1; letter-spacing: .02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.reloj__sufijo { font-size: 4vh; color: var(--amarillo); }
-.reloj__fecha { font-weight: 600; font-size: 2.4vh; letter-spacing: .12em; text-transform: uppercase; color: var(--turquesa-claro); margin-top: .8vh; }
-
+.barra__marca { display: flex; align-items: center; gap: 18px; }
+.barra__marca img { width: 86px; height: 86px; border-radius: 50%; box-shadow: 5px 5px 0 var(--petroleo); }
+.barra__marca span { font-family: var(--font-display); font-size: 40px; letter-spacing: .04em; text-transform: uppercase; }
+.barra__der { display: flex; align-items: center; gap: 28px; }
 .estado {
-  display: flex; align-items: center; gap: 1vw;
-  padding: 1.4vh 1.4vw;
-  background: rgba(255, 255, 255, .08);
-  font-weight: 700; font-size: 2vh; letter-spacing: .1em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 12px; padding: 12px 20px;
+  background: var(--petroleo);
+  font-weight: 700; font-size: 20px; letter-spacing: .12em; text-transform: uppercase;
 }
-.estado__punto { width: 1.6vh; height: 1.6vh; border-radius: 50%; background: var(--whatsapp); box-shadow: 0 0 0 .5vh rgba(37, 211, 102, .25); animation: latir 2s ease-in-out infinite; }
-.estado.is-cerrado .estado__punto { background: var(--amarillo); box-shadow: 0 0 0 .5vh rgba(245, 210, 74, .25); animation: none; }
-@keyframes latir { 50% { box-shadow: 0 0 0 1vh rgba(37, 211, 102, .1); } }
+.estado__punto { width: 14px; height: 14px; border-radius: 50%; background: var(--amarillo); animation: pulso 2s infinite; }
+@keyframes pulso { 0%, 100% { box-shadow: 0 0 0 0 rgba(245, 210, 74, .8); } 50% { box-shadow: 0 0 0 12px rgba(245, 210, 74, 0); } }
+.reloj { display: flex; align-items: baseline; gap: 10px; font-family: var(--font-display); }
+.reloj #hora { font-size: 78px; line-height: 1; font-variant-numeric: tabular-nums; }
+.reloj #ampm { font-size: 34px; color: var(--amarillo); }
 
-.redes-tv { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 1vh; }
-.redes-tv__marco { position: relative; flex: 1; min-height: 0; overflow: hidden; box-shadow: .8vh .8vh 0 var(--magenta); }
-.redes-tv__marco img { width: 100%; height: 100%; object-fit: cover; transition: opacity var(--dur-slide); }
-.redes-tv__marco img.is-fading { opacity: 0; }
-.redes-tv__marco span {
-  position: absolute; top: 1.2vh; left: 1.2vh; padding: .6vh 1vh;
-  background: var(--blanco); color: var(--magenta);
-  font-family: var(--font-display); font-size: 1.9vh; letter-spacing: .08em; text-transform: uppercase;
-  box-shadow: .4vh .4vh 0 var(--petroleo);
-}
-.redes-tv__handle { font-weight: 700; font-size: 2.2vh; letter-spacing: .1em; text-transform: uppercase; color: var(--amarillo); }
+/* ---------- QR ---------- */
 
-.qr { display: flex; align-items: center; gap: 1.2vw; padding: 1.4vh; background: var(--blanco); color: var(--petroleo); box-shadow: .8vh .8vh 0 var(--magenta); }
-.qr img { width: 14vh; height: 14vh; flex: none; }
-.qr b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 3vh; line-height: 1; text-transform: uppercase; }
-.qr span { display: block; font-size: 1.9vh; margin-top: .6vh; color: var(--gris); }
-
-.panda-tv { position: fixed; right: .6vw; top: .6vh; width: 6vw; z-index: 3; animation: flotar 3.5s ease-in-out infinite; pointer-events: none; }
-.reloj__fecha { padding-right: 6vw; }
-@keyframes flotar { 50% { transform: translateY(-1.2vh); } }
-
-/* ---------- Cinta inferior ---------- */
-
-.cinta {
-  grid-column: 1 / -1; overflow: hidden; display: flex; align-items: center;
+.qr {
+  position: absolute; right: 60px; top: 918px; z-index: 5;
+  display: flex; align-items: center; gap: 20px;
+  padding: 10px 24px 10px 10px;
   background: var(--blanco); color: var(--petroleo);
-  border-top: .5vh solid var(--petroleo);
+  box-shadow: 6px 6px 0 var(--petroleo);
 }
-.cinta__track { display: flex; width: max-content; animation: marquee 40s linear infinite; }
-.cinta__track span { flex: none; padding-right: .5em; font-family: var(--font-display); font-size: 3.2vh; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
-@keyframes marquee { to { transform: translateX(-50%); } }
+.qr img { width: 64px; height: 64px; }
+.qr b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1; text-transform: uppercase; }
+.qr span { display: block; font-size: 18px; font-weight: 500; white-space: nowrap; }
 
-/* ---------- Botón de pantalla completa (se oculta al activarla) ---------- */
+/* ---------- Panda ---------- */
 
-.tv__full {
-  position: fixed; right: 1.5vw; bottom: calc(var(--cinta) + 1.5vh); z-index: 5;
-  padding: 1.4vh 1.6vw; border: 0; cursor: pointer;
-  background: var(--amarillo); color: var(--petroleo);
-  font: 700 2vh var(--font-body); letter-spacing: .1em; text-transform: uppercase;
-  box-shadow: .6vh .6vh 0 var(--petroleo);
+.panda {
+  position: absolute; left: 28px; top: 800px; z-index: 20;
+  width: 190px; height: 190px;
+  animation: flotar 4.5s ease-in-out infinite;
 }
-body.is-full .tv__full, body.tv--sin-boton .tv__full { display: none; }
-body.is-full { cursor: none; }
-body:not(.is-full) { cursor: auto; }
-
-/* ---------- Vertical (?v=1): franja arriba, escenario abajo ---------- */
-
-body.tv--vertical {
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: 26vh minmax(0, 1fr) var(--cinta);
-}
-body.tv--vertical .tv__lado {
-  order: -1; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; gap: 1.5vh 3vw;
-  padding: 2vh 4vw; border-left: 0; border-bottom: .6vh solid var(--amarillo);
-}
-body.tv--vertical .reloj { grid-row: 1 / 3; min-width: 0; }
-body.tv--vertical .reloj__fecha { padding-right: 0; white-space: normal; max-width: 34vw; }
-body.tv--vertical .reloj__hora { font-size: 7vh; }
-body.tv--vertical .reloj__sufijo { font-size: 2.8vh; }
-body.tv--vertical .reloj__fecha { font-size: 1.9vh; }
-body.tv--vertical .redes-tv { display: none; }
-body.tv--vertical .estado { justify-self: end; font-size: 1.5vh; padding: 1.1vh 1.4vw; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
-body.tv--vertical .qr { justify-self: end; padding: 1vh; gap: 1.5vw; max-width: 100%; min-width: 0; }
-body.tv--vertical .qr > div { min-width: 0; }
-body.tv--vertical .qr img { width: 9vh; height: 9vh; }
-body.tv--vertical .qr b { font-size: 2vh; white-space: normal; line-height: 1.05; }
-body.tv--vertical .qr span { display: none; }
-body.tv--vertical .menu-tv__media { min-height: 48%; }
-body.tv--vertical .menu-tv__desc { display: none; }
-body.tv--vertical .menu-tv__body { padding: 1.2vh 1.4vw 1.4vh; }
-body.tv--vertical .menu-tv__price { font-size: 2.6vh; margin-top: .6vh; }
-body.tv--vertical .panda-tv { width: 14vw; right: 1vw; top: auto; bottom: calc(var(--cinta) + 1vh); }
-body.tv--vertical .slide--menu .display { font-size: 6.5vh; }
-body.tv--vertical .menu-tv__name { font-size: 3vh; }
-body.tv--vertical .slide { padding: 4vh 5vw; }
-body.tv--vertical .menu-tv { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-body.tv--vertical .slide--star { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); }
-body.tv--vertical .slide--star p { max-width: none; }
-body.tv--vertical .slide--redes { grid-template-columns: 1fr; grid-template-rows: auto auto; justify-items: center; text-align: center; }
-body.tv--vertical .promo-card__big { font-size: 22vh; }
-body.tv--vertical .promo-card__name { font-size: 7vh; }
-
-@media (prefers-reduced-motion: reduce) {
-  .slide, .redes-tv__marco img { transition-duration: .01ms; }
-  .cinta__track, .panda-tv, .estado__punto { animation: none; }
+@keyframes flotar { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-16px) rotate(3deg); } }
+.panda__sombra { position: absolute; inset: 0; border-radius: 50%; box-shadow: 10px 10px 0 var(--petroleo); }
+.panda__circulo { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; background: var(--rosa); }
+.panda__circulo img { position: absolute; left: 50%; bottom: -6%; max-width: none; width: 112%; transform: translateX(-50%); }
+.panda.is-tea .panda__circulo img { width: 128%; transform: translateX(-40%); }
+.panda__aro { position: absolute; inset: 0; border-radius: 50%; border: 10px solid var(--blanco); }
+.panda__burbuja {
+  position: absolute; left: 176px; top: 4px; white-space: nowrap;
+  padding: 12px 20px; border-radius: 22px 22px 22px 4px;
+  background: var(--blanco); color: var(--petroleo);
+  font-weight: 700; font-size: 24px; box-shadow: 5px 5px 0 var(--petroleo);
 }
 
-/* Pantallas chicas (teléfono/tablet, para previsualizar): todo un poco más
-   compacto y con la franja más baja. */
-@media (max-width: 700px) {
-  body.tv--vertical { grid-template-rows: 20vh minmax(0, 1fr) var(--cinta); }
-  body.tv--vertical .reloj__hora { font-size: 6vh; }
-  body.tv--vertical .qr img { width: 8vh; height: 8vh; }
-  body.tv--vertical .menu-tv { gap: 3vw; }
-  body.tv--vertical .menu-tv__name { font-size: 2.4vh; }
-  body.tv--vertical .slide--menu .display { font-size: 5.5vh; }
-  body.tv--vertical .promo-card__big { font-size: 18vh; }
-  body.tv--vertical .promo-card__name { font-size: 5.5vh; }
-  body.tv--vertical .slide--star .display { font-size: 8vh; }
-  body.tv--vertical .slide--redes .display { font-size: 8vh; }
-  body.tv--vertical .slide--redes .qr-big img { width: 30vh; height: 30vh; }
-  .cinta__track span { font-size: 2.6vh; }
-}
+/* ---------- Cinta inferior con progreso ---------- */
 
-/* ---------- Cortina de bienvenida ---------- */
+.cinta { position: absolute; left: 0; right: 0; bottom: 0; height: 72px; overflow: hidden; background: var(--petroleo); }
+.cinta__progreso { position: absolute; left: 0; top: 0; height: 5px; width: 0; background: var(--amarillo); }
+.cinta__track { display: flex; width: max-content; animation: marq 45s linear infinite; }
+.cinta__track span { padding-right: 24px; font-family: var(--font-display); font-size: 38px; line-height: 72px; letter-spacing: .04em; white-space: nowrap; }
+
+/* ---------- Panel de control ---------- */
+
+.panel {
+  position: absolute; left: 50%; top: -20px; z-index: 100;
+  display: flex; flex-direction: column; gap: 16px; padding: 22px 26px;
+  background: var(--petroleo); box-shadow: 10px 10px 0 var(--amarillo);
+  transform: translateX(-50%);
+  opacity: 0; pointer-events: none;
+  transition: opacity .4s, top .4s var(--ease);
+}
+.panel.is-on { top: 40px; opacity: 1; pointer-events: auto; }
+.panel__fila, .panel__grupo { display: flex; align-items: center; gap: 14px; }
+.panel__k { width: 120px; font-weight: 700; font-size: 16px; letter-spacing: .18em; text-transform: uppercase; color: var(--turquesa-claro); }
+.panel button {
+  padding: 8px 18px; border: 3px solid var(--blanco); cursor: pointer;
+  background: transparent; color: var(--blanco);
+  font-family: var(--font-display); font-size: 22px; letter-spacing: .04em; text-transform: uppercase;
+}
+.panel button[aria-pressed="true"], .panel .panel__full { background: var(--amarillo); border-color: var(--amarillo); color: var(--petroleo); }
+.panel__ayuda { font-size: 15px; opacity: .7; }
+
+/* ---------- Cortina de bienvenida (fuera del lienzo: pantalla real) ---------- */
+
 .cortina {
-  position: fixed; inset: 0; z-index: 20;
+  position: fixed; inset: 0; z-index: 200;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.2vh;
   padding: 6vh 6vw; text-align: center;
   background: var(--magenta);
   background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .06) 0 1.4vh, transparent 1.4vh 3.2vh);
-  cursor: auto;
   transition: opacity .6s var(--ease), transform .6s var(--ease);
 }
 .cortina.is-out { opacity: 0; transform: scale(1.04); pointer-events: none; }
-.cortina__logo { width: 16vh; height: 16vh; box-shadow: 1vh 1vh 0 var(--petroleo); border-radius: 50%; }
-.cortina__titulo { margin: 0; font-family: var(--font-display); font-size: 10vh; line-height: .95; text-transform: uppercase; text-shadow: .8vh .8vh 0 var(--petroleo); }
+.cortina__logo { width: 16vh; height: 16vh; border-radius: 50%; box-shadow: 1vh 1vh 0 var(--petroleo); }
+.cortina__titulo { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 10vh; line-height: .95; text-transform: uppercase; text-shadow: .8vh .8vh 0 var(--petroleo); }
 .cortina__texto { margin: 0; max-width: 60vw; font-size: 2.6vh; font-weight: 500; }
 .cortina__btn {
   margin-top: 1vh; padding: 2.4vh 4vw; border: 0; cursor: pointer;
   background: var(--amarillo); color: var(--petroleo);
-  font: 700 2.8vh var(--font-body); letter-spacing: .1em; text-transform: uppercase;
-  box-shadow: .8vh .8vh 0 var(--petroleo);
-  transition: transform .2s;
+  font-weight: 700; font-size: 2.8vh; letter-spacing: .1em; text-transform: uppercase;
+  box-shadow: .8vh .8vh 0 var(--petroleo); transition: transform .2s;
 }
 .cortina__btn:hover { transform: translate(-.3vh, -.3vh); }
 .cortina__nota { margin: 0; font-size: 1.8vh; opacity: .8; letter-spacing: .1em; text-transform: uppercase; }
@@ -270,4 +212,8 @@ body.tv--vertical .promo-card__name { font-size: 7vh; }
 @media (max-width: 700px) {
   .cortina__titulo { font-size: 7vh; }
   .cortina__texto { max-width: 90vw; font-size: 2.2vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .afiche__fondo div, .cinta__track, .panda, .estado__punto { animation: none; }
 }

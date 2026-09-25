@@ -17,9 +17,9 @@ formularios: los pedidos se hacen por WhatsApp.
 | Archivo | Contenido |
 |---|---|
 | `index.html` | Página única con todas las secciones |
-| `pantalla.html` | Pantalla del local (TV): rota promos, menú y fotos; reloj, estado y QR de WhatsApp |
+| `pantalla.html` | Pantalla del local (TV), concepto Póster Bold: afiches que rotan, reloj, estado y QR |
 | `css/pantalla.css` / `js/pantalla.js` | Estilos y lógica de la pantalla del local |
-| `js/datos.js` | Datos compartidos: `MENU`, `PROMOS` y `FOTOS_REDES` (los usan la landing y la pantalla) |
+| `js/datos.js` | Datos del menú de la landing (`MENU`) |
 | `css/styles.css` | Estilos, tokens de color y las duraciones de movimiento (`--dur-*`) |
 | `js/app.js` | Filtro del menú, menú móvil, carrusel de promos y animaciones por scroll |
 | `img/` | Fotos optimizadas en WebP, logo, stickers del panda, favicon e imagen para compartir (`og.jpg`) |
@@ -42,7 +42,7 @@ o dos minutos.
 
 ## Cambiar el menú
 
-Editar el arreglo `MENU` en `js/datos.js` (también alimenta la pantalla del local). Cada producto lleva
+Editar el arreglo `MENU` en `js/datos.js`. Cada producto lleva
 `cat` (categoría; los filtros salen solos de las categorías que existan),
 `name`, `desc`, `price`, `img` (nombre del archivo en `img/` sin extensión)
 y `pos` (encuadre de la foto, `object-position`). `ing` es la lista de
@@ -124,27 +124,30 @@ versiona.
 
 ## Pantalla del local (TV)
 
-`pantalla.html` es la señalización para las tres TV de 32". En el navegador
-de la TV (o de un stick/mini PC conectado) se abre
-`https://jcanalyticscr.github.io/placeres-culposos-web/pantalla.html` y se
-toca "Pantalla completa" (o la tecla F). Rota sola: menú por categoría,
-promos del mes, la estrella de la casa y una invitación a seguir en redes;
-a la derecha, hora y fecha en vivo, abierto/cerrado según el horario, una
-foto de redes que va cambiando y el QR para pedir por WhatsApp desde la mesa.
+`pantalla.html` es la señalización para las TV del local (concepto "Póster
+Bold"): afiches a pantalla completa que rotan solos con la promo o el
+producto, precio, foto, reloj, abierto/cerrado, QR de WhatsApp, panda con
+globo de texto y cinta inferior con barra de progreso. Se diseñó sobre un
+lienzo de 1920x1080 que se escala para llenar cualquier pantalla.
 
-Parámetros en la URL:
+Uso: abrir `https://jcanalyticscr.github.io/placeres-culposos-web/pantalla.html`
+en la TV (o desde el botón "Modo presentación" del footer) y tocar "Iniciar
+en pantalla completa". Mover el mouse o tocar abre el panel de control
+(qué mostrar, anterior/siguiente, pausa, pantalla completa); se oculta solo
+a los 3,5 s. Cada TV recuerda su elección.
 
 | Parámetro | Efecto |
 |---|---|
-| `?v=1` / `?h=1` | Fuerzan vertical u horizontal. Sin parámetro se amolda sola a la pantalla (vertical si es más alta que ancha: TV de pie, tablet o teléfono) |
-| `?seg=12` | Segundos por diapositiva (por defecto 9) |
-| `?auto` | Salta la cortina de bienvenida (cuando la TV ya arranca en pantalla completa) |
-| `?sinboton` | Oculta la cortina y el botón de pantalla completa (modo kiosco) |
+| `?m=promos` / `fresas` / `bebidas` / `postres` / `todo` | Qué afiches mostrar |
+| `?seg=12` | Segundos por afiche (por defecto 8) |
+| `?auto` | Salta la cortina de bienvenida (TV que ya arranca en pantalla completa) |
 
-Se combinan: `pantalla.html?v=1&seg=12&sinboton`. El horario de
-abierto/cerrado está en `HORARIO` dentro de `js/pantalla.js` (PENDIENTE:
-confirmar con el cliente). Sin internet la TV no carga la página: dejar la
-pestaña abierta y el navegador se encarga de la caché.
+Teclas: ← → cambiar afiche · Espacio pausa · F pantalla completa.
+
+Los afiches están en `AFICHES` dentro de `js/pantalla.js` (texto, precio,
+foto de `img/`, palabra de fondo, globo del panda). El horario está en
+`HORARIO` (PENDIENTE: confirmar con el cliente). Todo es local: no depende
+de librerías ni servicios externos salvo las fuentes de Google.
 
 ## Pendientes antes de lanzar
 

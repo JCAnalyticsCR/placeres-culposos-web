@@ -3,71 +3,86 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <title>Placeres Culposos · Pantalla del local</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#E3257B">
 <link rel="icon" type="image/png" href="img/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/pantalla.css?v=20260924q">
-<script src="js/datos.js?v=20260924q" defer></script>
-<script src="js/pantalla.js?v=20260924q" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/pantalla.css?v=20260924r">
+<script src="js/pantalla.js?v=20260924r" defer></script>
 </head>
-<!-- Pantalla del local (TV de 32" en horizontal, o vertical con ?v=1).
-     Se abre en el navegador de la TV y se pone a pantalla completa con un
-     toque o la tecla F. Rota promos, menú y fotos sin intervención. -->
-<body class="tv">
+<!-- Pantalla del local, concepto "Póster Bold": un lienzo de 1920x1080 que se
+     escala para llenar cualquier pantalla. Rota los afiches solo; mover el
+     mouse o tocar muestra el panel de control. Ver README ("Pantalla del local"). -->
+<body>
 
-<main class="tv__escena" id="escena" aria-live="off">
-  <!-- Las diapositivas las arma pantalla.js con los datos de datos.js -->
-</main>
+<div class="lienzo-marco" id="marco">
+  <div class="lienzo" id="lienzo">
 
-<aside class="tv__lado">
-  <div class="reloj">
-    <div class="reloj__hora"><span id="hora">00:00</span><span class="reloj__sufijo" id="sufijo">p. m.</span></div>
-    <div class="reloj__fecha" id="fecha">—</div>
-  </div>
+    <div class="afiches" id="afiches" aria-live="off"></div>
 
-  <div class="estado" id="estado">
-    <span class="estado__punto"></span>
-    <span id="estado-texto">Abierto hoy · 1:00 a 9:00 p. m.</span>
-  </div>
+    <header class="barra">
+      <div class="barra__marca">
+        <img src="img/logo.webp" width="192" height="192" alt="Placeres Culposos">
+        <span>Placeres Culposos</span>
+      </div>
+      <div class="barra__der">
+        <div class="estado"><span class="estado__punto"></span><span id="estado">Abierto ahora · hasta 9 p. m.</span></div>
+        <div class="reloj"><span id="hora">0:00</span><span id="ampm">p. m.</span></div>
+      </div>
+    </header>
 
-  <div class="redes-tv">
-    <div class="redes-tv__marco" id="foto-red">
-      <img id="foto-red-img" src="img/pc_31.webp" alt="" decoding="async">
-      <span id="foto-red-tag">Instagram</span>
+    <div class="qr" id="qr">
+      <img src="img/qr-whatsapp.svg" width="312" height="312" alt="QR para pedir por WhatsApp">
+      <div>
+        <b>Pedí desde la mesa</b>
+        <span>Escaneá y escribinos por WhatsApp · @placeresculpososcr</span>
+      </div>
     </div>
-    <div class="redes-tv__handle">@placeresculpososcr</div>
-  </div>
 
-  <div class="qr">
-    <img src="img/qr-whatsapp.svg" width="312" height="312" alt="Código QR para pedir por WhatsApp">
-    <div>
-      <b>Pedí desde la mesa</b>
-      <span>Escaneá y escribinos por WhatsApp</span>
+    <div class="panda" id="panda">
+      <div class="panda__sombra"></div>
+      <div class="panda__circulo"><img id="panda-img" src="img/panda-happy.webp" width="330" height="290" alt=""></div>
+      <div class="panda__aro"></div>
+      <div class="panda__burbuja" id="burbuja">¡2x en fresas!</div>
     </div>
-  </div>
 
-</aside>
-<img class="panda-tv" src="img/panda-tea.webp" width="340" height="300" alt="" decoding="async">
+    <footer class="cinta">
+      <div class="cinta__progreso" id="progreso"></div>
+      <div class="cinta__track">
+        <span>CAFÉ ★ CREPES ★ BINGSU ★ CHAPATAZO ★ PEDÍ AL 6456 4841 ★ FRESAS CON CREMA ★ BUBBLE TEA ★ MANGONADAS ★ FRAPPÉS ★</span>
+        <span>CAFÉ ★ CREPES ★ BINGSU ★ CHAPATAZO ★ PEDÍ AL 6456 4841 ★ FRESAS CON CREMA ★ BUBBLE TEA ★ MANGONADAS ★ FRAPPÉS ★</span>
+      </div>
+    </footer>
 
-<div class="cinta" aria-hidden="true">
-  <div class="cinta__track">
-    <span>Fresas con crema ★ Bubble tea ★ Mangonadas ★ Frappés ★ Café ★ Crepes ★ Bingsu ★ Chapatazo ★ Pedí al 6456 4841 ★ </span><span>Fresas con crema ★ Bubble tea ★ Mangonadas ★ Frappés ★ Café ★ Crepes ★ Bingsu ★ Chapatazo ★ Pedí al 6456 4841 ★ </span>
+    <!-- Panel de control: aparece al mover el mouse o tocar, se oculta a los 3,5 s. -->
+    <div class="panel" id="panel">
+      <div class="panel__fila">
+        <span class="panel__k">Mostrar</span>
+        <div class="panel__grupo" id="filtros"></div>
+      </div>
+      <div class="panel__fila">
+        <span class="panel__k">Control</span>
+        <button type="button" data-accion="prev" aria-label="Afiche anterior">◀</button>
+        <button type="button" data-accion="next" aria-label="Afiche siguiente">▶</button>
+        <button type="button" data-accion="pausa" id="btn-pausa">Pausa</button>
+        <button type="button" data-accion="full" class="panel__full">Pantalla completa</button>
+        <span class="panel__ayuda">Teclas: ← → · Espacio pausa · F</span>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<button class="tv__full" id="btn-full" type="button">Pantalla completa</button>
-
-<!-- Cortina de bienvenida: un toque entra a pantalla completa y arranca el
-     modo presentación. Se salta con ?sinboton (kiosco ya configurado). -->
+<!-- Cortina de bienvenida: el toque en "Iniciar" es el gesto que el navegador
+     exige para entrar a pantalla completa. ?auto la salta. -->
 <div class="cortina" id="cortina">
   <img class="cortina__logo" src="img/logo.webp" width="192" height="192" alt="">
   <h1 class="cortina__titulo">Modo presentación</h1>
-  <p class="cortina__texto">Promos, menú, redes y hora, rotando solos para la pantalla del local.</p>
+  <p class="cortina__texto">Promos, menú, hora y QR, rotando solos para la pantalla del local.</p>
   <button class="cortina__btn" id="btn-iniciar" type="button">▶ Iniciar en pantalla completa</button>
   <p class="cortina__nota">También con la tecla F · Esc para salir</p>
   <a class="cortina__volver" href="index.html">← Volver a la página</a>
