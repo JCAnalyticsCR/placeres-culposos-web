@@ -11,13 +11,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/pantalla.css?v=20260925h">
-<link rel="stylesheet" href="css/tv-horizontal.css?v=20260925h">
-<link rel="stylesheet" href="css/tv-vertical.css?v=20260925h">
-<link rel="stylesheet" href="css/tv-extras.css?v=20260925h">
-<link rel="stylesheet" href="css/tv-movimiento.css?v=20260925h">
-<script src="js/datos.js?v=20260925h" defer></script>
-<script src="js/pantalla.js?v=20260925h" defer></script>
+<link rel="stylesheet" href="css/pantalla.css?v=20260925i">
+<link rel="stylesheet" href="css/tv-horizontal.css?v=20260925i">
+<link rel="stylesheet" href="css/tv-vertical.css?v=20260925i">
+<link rel="stylesheet" href="css/tv-extras.css?v=20260925i">
+<link rel="stylesheet" href="css/tv-movimiento.css?v=20260925i">
+<script src="js/datos.js?v=20260925i" defer></script>
+<script src="js/pantalla.js?v=20260925i" defer></script>
 </head>
 <!-- Pantalla del local. Dos formatos sobre lienzos fijos que se escalan para
      llenar la pantalla:
@@ -118,6 +118,7 @@
 
     <!-- Panel de control: aparece al mover el mouse o tocar, se oculta a los 3,5 s. -->
     <div class="panel" id="panel">
+      <button class="panel__cerrar" id="btn-cerrar-panel" type="button" aria-label="Ocultar controles" title="Ocultar controles">✕</button>
       <div class="panel__fila">
         <span class="panel__k">Formato</span>
         <div class="panel__grupo" id="formatos"></div>
@@ -132,7 +133,7 @@
         <button type="button" data-accion="next" aria-label="Afiche siguiente">▶</button>
         <button type="button" data-accion="pausa" id="btn-pausa">Pausa</button>
         <button type="button" data-accion="full" class="panel__full">Pantalla completa</button>
-        <span class="panel__ayuda">Teclas: ← → · Espacio pausa · F · V formato</span>
+        <span class="panel__ayuda">Teclas: ← → · Espacio pausa · F · V formato · M panel · ✕ o Esc lo oculta</span>
       </div>
     </div>
 

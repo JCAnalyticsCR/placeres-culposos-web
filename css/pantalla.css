@@ -181,6 +181,17 @@ button { font: inherit; }
 }
 .panel button[aria-pressed="true"], .panel .panel__full { background: var(--amarillo); border-color: var(--amarillo); color: var(--petroleo); }
 .panel__ayuda { font-size: 15px; opacity: .7; }
+/* Botón ✕ para ocultar el panel: círculo amarillo montado en la esquina. */
+.panel .panel__cerrar {
+  position: absolute; top: -26px; right: -26px;
+  width: 60px; height: 60px; padding: 0; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 4px solid var(--petroleo);
+  background: var(--amarillo); color: var(--petroleo);
+  font-family: var(--font-body); font-weight: 700; font-size: 28px; line-height: 1;
+  box-shadow: 5px 5px 0 var(--petroleo);
+}
+.panel .panel__cerrar:hover { background: var(--blanco); }
 
 /* ---------- Cortina de bienvenida (fuera del lienzo: pantalla real) ---------- */
 

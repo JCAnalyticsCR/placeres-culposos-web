@@ -9,7 +9,8 @@
      ?m=promos | fresas | bebidas | postres | todo   qué afiches mostrar
      ?seg=10           segundos por afiche (por defecto 8)
      ?auto             salta la cortina de bienvenida
-   Teclas: ← → cambiar afiche · Espacio pausa · F pantalla completa · V formato. */
+   Teclas: ← → cambiar afiche · Espacio pausa · F pantalla completa · V formato ·
+   M mostrar panel · Esc (o ✕) ocultarlo. */
 
 'use strict';
 
@@ -398,14 +399,32 @@ function tick() {
 /* ---------- Panel de control y cortina ---------- */
 
 let dormir = 0;
+// Tras cerrar el panel con ✕, el mouse ya no lo vuelve a abrir: solo un
+// toque/clic en la pantalla o la tecla M.
+let silenciado = false;
+let ultimoMouse = null;
+
 function despertar() {
   $('panel').classList.add('is-on');
   marco.classList.remove('is-dormido');
   clearTimeout(dormir);
-  dormir = setTimeout(() => {
-    $('panel').classList.remove('is-on');
-    marco.classList.add('is-dormido');
-  }, 3500);
+  dormir = setTimeout(ocultarPanel, 3500);
+}
+
+function ocultarPanel() {
+  clearTimeout(dormir);
+  $('panel').classList.remove('is-on');
+  marco.classList.add('is-dormido');
+}
+
+// Algunos controles de TV y mouses mandan movimientos mínimos continuos:
+// solo cuenta un movimiento real (más de 12 px desde el anterior).
+function alMoverMouse(e) {
+  if (silenciado) return;
+  const p = { x: e.clientX, y: e.clientY };
+  if (ultimoMouse && Math.hypot(p.x - ultimoMouse.x, p.y - ultimoMouse.y) < 12) return;
+  ultimoMouse = p;
+  despertar();
 }
 
 function boton(texto, activo, alHacerClic, nota) {
@@ -438,8 +457,18 @@ function pantallaCompleta() {
 }
 
 function initControles() {
-  marco.addEventListener('mousemove', despertar);
-  marco.addEventListener('click', despertar);
+  marco.addEventListener('mousemove', alMoverMouse);
+  marco.addEventListener('click', (e) => {
+    if (e.target.closest('#panel')) { despertar(); return; }
+    silenciado = false;
+    despertar();
+  });
+  $('btn-cerrar-panel').addEventListener('click', (e) => {
+    e.stopPropagation();
+    silenciado = true;
+    ultimoMouse = null;
+    ocultarPanel();
+  });
   $('panel').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-accion]');
     if (!b) return;
@@ -454,6 +483,8 @@ function initControles() {
     else if (e.key === 'ArrowLeft') paso(-1);
     else if (e.key === ' ') { e.preventDefault(); alternarPausa(); }
     else if (e.key === 'f' || e.key === 'F') pantallaCompleta();
+    else if (e.key === 'm' || e.key === 'M') { silenciado = false; despertar(); }
+    else if (e.key === 'Escape' && $('panel').classList.contains('is-on')) { silenciado = true; ocultarPanel(); }
     else if (e.key === 'v' || e.key === 'V') {
       const k = FORMATOS.findIndex((f) => f.id === formato);
       cambiarFormato(FORMATOS[(k + 1) % FORMATOS.length].id);

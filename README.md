@@ -149,7 +149,10 @@ elecciones.
 | `?seg=12` | Segundos por afiche (por defecto 8; el catálogo usa 1,5 veces eso) |
 | `?auto` | Salta la cortina de bienvenida (TV que ya arranca en pantalla completa) |
 
-Teclas: ← → cambiar afiche · Espacio pausa · F pantalla completa · V formato.
+Teclas: ← → cambiar afiche · Espacio pausa · F pantalla completa · V formato ·
+M mostrar panel · Esc ocultarlo. El botón ✕ del panel lo oculta; después de
+eso el mouse ya no lo reabre (solo un toque/clic o la tecla M), así un mouse
+o control que "tiembla" no lo deja pegado.
 
 Los afiches están en `AFICHES` dentro de `js/pantalla.js` (con `tipo` para las
 diapositivas especiales). El horario está en `HORARIO` (PENDIENTE: confirmar
