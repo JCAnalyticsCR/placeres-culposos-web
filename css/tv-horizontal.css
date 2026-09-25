@@ -1,1 +1,232 @@
-/* tv-horizontal — ver comentario de pantalla.html */
+/* =====================================================================
+   tv-horizontal.css  —  Art direction Formato Póster Bold (1920 × 1080)
+   Scope: .lienzo:not(.is-v)  |  NO transition / animation / @keyframes
+   ===================================================================== */
+
+/* ── Patrón halftone sobre el lienzo magenta ────────────────────────── */
+.lienzo:not(.is-v) .formato--h {
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,.08) 1.5px, transparent 1.5px);
+  background-size: 34px 34px;
+  background-position: 17px 17px;
+}
+
+/* División diagonal sutil: lado foto levemente más oscuro */
+.lienzo:not(.is-v) .formato--h::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(107deg, transparent 51%, rgba(0,0,0,.10) 51%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Barra superior: petroleo sólido + franja amarilla abajo ─────────── */
+.lienzo:not(.is-v) .barra {
+  background: var(--petroleo);
+  border-bottom: 8px solid var(--amarillo);
+  z-index: 10;
+}
+
+/* Logo: sombra sobre fondo oscuro cambia a amarillo */
+.lienzo:not(.is-v) .barra__marca img {
+  box-shadow: 6px 6px 0 var(--amarillo);
+}
+
+/* ── Reloj: máxima legibilidad desde el otro extremo del local ───────── */
+.lienzo:not(.is-v) .reloj__h {
+  font-size: 132px;
+  letter-spacing: -.02em;
+  text-shadow: 5px 5px 0 rgba(0,0,0,.55);
+}
+.lienzo:not(.is-v) .reloj__ap {
+  font-size: 54px;
+  text-shadow: 4px 4px 0 rgba(0,0,0,.4);
+}
+
+/* ── Estado: badge legible a distancia ───────────────────────────────── */
+.lienzo:not(.is-v) .estado {
+  font-size: 30px;
+  padding: 18px 30px;
+  letter-spacing: .12em;
+  box-shadow: 7px 7px 0 rgba(0,0,0,.35);
+}
+.lienzo:not(.is-v) .estado__punto {
+  width: 20px;
+  height: 20px;
+}
+
+/* ── Afiches: encima del patrón de fondo, debajo de la barra ────────── */
+.lienzo:not(.is-v) .afiche {
+  z-index: 1;
+}
+
+/* ── Cintas adhesivas decorativas sobre el marco de foto ────────────── */
+/* Posicionadas relativas al lienzo (afiche cubre inset:0).
+   La foto está en left:970 top:158 w:870 h:850.
+   Cinta 1 (amarillo): cuelga en la parte superior del marco */
+.lienzo:not(.is-v) .afiche:not(.xslide)::before {
+  content: '';
+  position: absolute;
+  left: 1036px;
+  top: 144px;
+  width: 256px;
+  height: 30px;
+  background: var(--amarillo);
+  opacity: .90;
+  transform: rotate(-2.5deg);
+  z-index: 8;
+  box-shadow: 4px 5px 0 rgba(0,0,0,.24);
+}
+
+/* Cinta 2 (turquesa): fija la esquina inferior derecha del marco */
+.lienzo:not(.is-v) .afiche:not(.xslide)::after {
+  content: '';
+  position: absolute;
+  left: 1508px;
+  top: 958px;
+  width: 210px;
+  height: 26px;
+  background: var(--turquesa-claro);
+  opacity: .85;
+  transform: rotate(2deg);
+  z-index: 8;
+  box-shadow: 4px 4px 0 rgba(0,0,0,.20);
+}
+
+/* ── Bloque de texto: columna izquierda ─────────────────────────────── */
+.lienzo:not(.is-v) .afiche__texto {
+  top: 178px;
+  gap: 20px;
+}
+
+/* Barra vertical de acento → define el carril del texto */
+.lienzo:not(.is-v) .afiche__texto::before {
+  content: '';
+  position: absolute;
+  left: -26px;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  background: var(--amarillo);
+  box-shadow: 5px 5px 0 var(--petroleo);
+}
+
+/* ── Kicker ───────────────────────────────────────────────────────────── */
+.lienzo:not(.is-v) .afiche__kicker {
+  font-size: 26px;
+  padding: 14px 28px;
+  max-width: 820px;
+  overflow-wrap: break-word;
+  box-shadow: 7px 7px 0 rgba(0,0,0,.32);
+}
+
+/* ── Nombre del producto: antioverflow ───────────────────────────────── */
+.lienzo:not(.is-v) .afiche__nombre {
+  max-width: 820px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ── Descripción (sub) ────────────────────────────────────────────────── */
+.lienzo:not(.is-v) .afiche__sub {
+  font-size: 36px;
+  max-width: 780px;
+  overflow-wrap: break-word;
+  line-height: 1.18;
+}
+
+/* ── Precio: sticker "sello de oferta" ───────────────────────────────── */
+.lienzo:not(.is-v) .afiche__precio {
+  position: relative;
+  font-size: 100px;
+  padding: 10px 38px 18px;
+  box-shadow: 14px 14px 0 var(--petroleo);
+  overflow: visible;
+}
+
+/* Aro punteado: efecto sello/estampilla alrededor del precio */
+.lienzo:not(.is-v) .afiche__precio::before {
+  content: '';
+  position: absolute;
+  inset: -14px;
+  border: 5px dashed rgba(31,58,74,.38);
+  transform: rotate(1.5deg);
+  pointer-events: none;
+}
+
+/* Estrella decorativa en esquina superior derecha del precio */
+.lienzo:not(.is-v) .afiche__precio::after {
+  content: '★';
+  position: absolute;
+  top: -32px;
+  right: -38px;
+  font-size: 54px;
+  color: var(--amarillo);
+  text-shadow: 4px 4px 0 var(--petroleo);
+  font-family: var(--font-display);
+  line-height: 1;
+}
+
+/* ── Marco de la foto: más grande, llena el lado derecho ────────────── */
+.lienzo:not(.is-v) .afiche__foto {
+  top: 158px;
+  left: 970px;
+  width: 870px;
+  height: 818px;   /* termina en y=976: no pisa la cinta (y=1002) */
+  border-width: 16px;
+  border-color: var(--blanco);
+  box-shadow: 24px 24px 0 var(--petroleo);
+}
+
+/* ── Panda: completamente visible dentro del círculo ────────────────── */
+.lienzo:not(.is-v) .panda {
+  width: 180px;
+  height: 180px;
+  top: 812px;
+  left: 40px;
+}
+
+/* Centrado vertical del panda ajustado para que no se corte */
+.lienzo:not(.is-v) .panda__circulo img {
+  top: 54%;
+  width: 82%;
+}
+
+/* Aro con doble anillo: blanco + amarillo (acento de marca) */
+.lienzo:not(.is-v) .panda__aro {
+  border-width: 11px;
+  border-color: var(--blanco);
+  box-shadow: 0 0 0 5px var(--amarillo), 9px 9px 0 var(--petroleo);
+}
+
+/* Burbuja de texto más legible */
+.lienzo:not(.is-v) .panda__burbuja {
+  font-size: 25px;
+  padding: 13px 22px;
+  box-shadow: 6px 6px 0 var(--petroleo);
+  left: 172px;
+}
+
+/* ── Cinta ticker inferior: borde de acento + separador visible ───────── */
+.lienzo:not(.is-v) .cinta {
+  border-top: 6px solid var(--amarillo);
+}
+
+/* Integración: las cintas aparecen cuando la foto ya llegó a su lugar (no
+   flotan en el aire mientras el marco entra), y el "2X" se achica en los
+   nombres de dos líneas para que el precio no baje hasta el panda. */
+.lienzo:not(.is-v) .afiche:not(.xslide)::before,
+.lienzo:not(.is-v) .afiche:not(.xslide)::after { opacity: 0; transition: opacity .4s; }
+.lienzo:not(.is-v) .afiche.is-on:not(.xslide)::before { opacity: .9; transition-delay: 1.1s; }
+.lienzo:not(.is-v) .afiche.is-on:not(.xslide)::after { opacity: .85; transition-delay: 1.2s; }
+.lienzo:not(.is-v) .afiche__pre { font-size: 200px; }
+.lienzo:not(.is-v) .afiche--largo .afiche__pre { font-size: 150px; }
+
+/* Integración (revisión de solapes): reloj con aire arriba dentro de la barra,
+   bloque de texto un poco más arriba para que el precio no roce al panda, y
+   el subtítulo del saludo a la derecha, lejos del globo del panda. */
+.lienzo:not(.is-v) .reloj__h { font-size: 112px; }
+.lienzo:not(.is-v) .reloj__ap { font-size: 46px; }
+.lienzo:not(.is-v) .afiche__texto { top: 164px; }
+.lienzo:not(.is-v) .afiche.xslide--saludo .xs-sal-sub { left: auto; right: 80px; bottom: 90px; text-align: right; }

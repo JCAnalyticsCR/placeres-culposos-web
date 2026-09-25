@@ -18,7 +18,8 @@ formularios: los pedidos se hacen por WhatsApp.
 |---|---|
 | `index.html` | Página única con todas las secciones |
 | `pantalla.html` | Pantalla del local (TV), concepto Póster Bold: afiches que rotan, reloj, estado y QR |
-| `css/pantalla.css` / `js/pantalla.js` | Estilos y lógica de la pantalla del local |
+| `css/pantalla.css` / `js/pantalla.js` | Base y lógica de la pantalla del local (afiches, formato, catálogo, panel) |
+| `css/tv-horizontal.css` / `tv-vertical.css` / `tv-extras.css` / `tv-movimiento.css` | Capas de diseño de la pantalla: póster horizontal, catálogo vertical, diapositivas especiales (saludo, redes, reseñas, antojo del día) y movimiento. Se cargan en ese orden |
 | `js/datos.js` | Datos del menú de la landing (`MENU`) |
 | `css/styles.css` | Estilos, tokens de color y las duraciones de movimiento (`--dur-*`) |
 | `js/app.js` | Filtro del menú, menú móvil, carrusel de promos y animaciones por scroll |
@@ -124,30 +125,36 @@ versiona.
 
 ## Pantalla del local (TV)
 
-`pantalla.html` es la señalización para las TV del local (concepto "Póster
-Bold"): afiches a pantalla completa que rotan solos con la promo o el
-producto, precio, foto, reloj, abierto/cerrado, QR de WhatsApp, panda con
-globo de texto y cinta inferior con barra de progreso. Se diseñó sobre un
-lienzo de 1920x1080 que se escala para llenar cualquier pantalla.
+`pantalla.html` es la señalización para las TV del local, con dos formatos
+sobre lienzos fijos que se escalan para llenar cualquier pantalla:
+
+- **Horizontal** (1920x1080, "Póster Bold"): afiches de promos y productos
+  con precio y foto grande, más diapositivas especiales (saludo según la
+  hora, redes, reseñas y el antojo del día).
+- **Vertical** (1080x1920, "Catálogo", para la TV de pie): arriba el afiche
+  destacado y abajo el menú de `js/datos.js` por categoría, con foto y precio,
+  que se acomoda a 2–6 productos; QR de WhatsApp al pie.
 
 Uso: abrir `https://jcanalyticscr.github.io/placeres-culposos-web/pantalla.html`
-en la TV (o desde el botón "Modo presentación" del footer) y tocar "Iniciar
-en pantalla completa". Mover el mouse o tocar abre el panel de control
-(qué mostrar, anterior/siguiente, pausa, pantalla completa); se oculta solo
-a los 3,5 s. Cada TV recuerda su elección.
+en la TV (o desde el botón "Modo presentación" del footer), elegir el formato
+(Automático, Horizontal o Vertical) y tocar "Iniciar en pantalla completa".
+Mover el mouse o tocar abre el panel (formato, qué mostrar, anterior/siguiente,
+pausa, pantalla completa); se oculta solo a los 3,5 s. Cada TV recuerda sus
+elecciones.
 
 | Parámetro | Efecto |
 |---|---|
+| `?o=h` / `v` / `auto` | Formato (por defecto el guardado, o automático según la pantalla) |
 | `?m=promos` / `fresas` / `bebidas` / `postres` / `todo` | Qué afiches mostrar |
-| `?seg=12` | Segundos por afiche (por defecto 8) |
+| `?seg=12` | Segundos por afiche (por defecto 8; el catálogo usa 1,5 veces eso) |
 | `?auto` | Salta la cortina de bienvenida (TV que ya arranca en pantalla completa) |
 
-Teclas: ← → cambiar afiche · Espacio pausa · F pantalla completa.
+Teclas: ← → cambiar afiche · Espacio pausa · F pantalla completa · V formato.
 
-Los afiches están en `AFICHES` dentro de `js/pantalla.js` (texto, precio,
-foto de `img/`, palabra de fondo, globo del panda). El horario está en
-`HORARIO` (PENDIENTE: confirmar con el cliente). Todo es local: no depende
-de librerías ni servicios externos salvo las fuentes de Google.
+Los afiches están en `AFICHES` dentro de `js/pantalla.js` (con `tipo` para las
+diapositivas especiales). El horario está en `HORARIO` (PENDIENTE: confirmar
+con el cliente). Todo es local: no depende de librerías ni servicios externos
+salvo las fuentes de Google.
 
 ## Pendientes antes de lanzar
 

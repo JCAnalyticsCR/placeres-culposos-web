@@ -28,6 +28,11 @@ const AFICHES = [
   { cat: 'postres', kicker: 'Recién hechas', name: 'Crepes dulces', sub: 'Visitanos o pedí por PedidosYa', img: 'pc_20', word: 'CREPES', bubble: '¡Qué rico!', panda: 'happy' },
   { cat: 'postres', kicker: 'Para cerrar', name: 'Cheesecake de Oreo', sub: 'Una porción para el antojo', img: 'pc_17', word: 'CHEESECAKE', bubble: '¿Postrecito?', panda: 'happy' },
   { cat: 'salado', kicker: 'Antojo salado', name: 'Chapatazo', sub: 'Visitanos o pedí por PedidosYa', img: 'pc_23', word: 'CHAPATAZO', bubble: '¡Algo saladito!', panda: 'tea' },
+  // Slides especiales: solo aparecen en el filtro "Todo"; los de categoría los omiten.
+  { tipo: 'saludo',     bubble: '¡Bienvenido!',       panda: 'happy' },
+  { tipo: 'social',     bubble: '¡Seguinos!',          panda: 'tea'   },
+  { tipo: 'prueba',     bubble: '¡4.8 estrellas!',     panda: 'happy' },
+  { tipo: 'antojo-dia', bubble: '¡El antojo del día!', panda: 'happy' },
 ];
 
 const FILTROS = [
@@ -133,7 +138,29 @@ function tamNombre(a, vertical) {
   return n > 20 ? 110 : n > 12 ? 130 : 170;
 }
 
-function crearAfiche(a, vertical) {
+/* ---------- Slides especiales: saludo horario, redes, prueba social, antojo ---------- */
+
+function textoSaludo() {
+  const h = new Date().getHours();
+  if (h >= 5  && h < 12) return { label: 'Buenos días',       titulo: '¡Buenos\ndías,\nEl Roble!',   sub: 'El desayuno es mejor con algo dulce',     bubble: '¡Buenos días!'   };
+  if (h >= 12 && h < 14) return { label: 'Hora del almuerzo', titulo: '¡Buenas,\nEl Roble!',         sub: '¿Ya pensaste qué vas a pedir hoy?',       bubble: '¿Qué pedimos?'   };
+  if (h >= 14 && h < 19) return { label: 'Buenas tardes',     titulo: '¡Buenas\ntardes,\nEl Roble!', sub: 'El antojo de la tarde ya llegó',           bubble: '¡Bienvenido!'    };
+  if (h >= 19 && h < 22) return { label: 'Buenas noches',     titulo: '¡Buenas\nnoches,\nEl Roble!', sub: '¿Antojo de noche?',                       bubble: '¿Qué pedís?'     };
+  return                         { label: 'Trasnoche sabroso', titulo: '¡Noche\nde antojo,\nEl Roble!', sub: 'La noche apenas empieza',               bubble: '¡Noche sabrosa!' };
+}
+
+// Actualiza las marcas de texto del saludo cuando la diapositiva queda activa
+// (puede cambiar entre mañana/tarde/noche sin recargar la página).
+function actualizarSaludo() {
+  const info = textoSaludo();
+  $$('.js-saludo-label').forEach((n) => { n.textContent = info.label; });
+  $$('.js-saludo-titulo').forEach((n) => { n.textContent = info.titulo; });
+  $$('.js-saludo-sub').forEach((n) => { n.textContent = info.sub; });
+  $$('.js-burbuja').forEach((n) => { n.textContent = info.bubble; });
+}
+
+// Póster de producto: lógica original de crearAfiche, sin cambios.
+function crearAficheProducto(a, vertical) {
   const s = el('section', vertical ? 'vafiche' : 'afiche');
   const fondo = el('div', 'afiche__fondo');
   const linea = `${a.word} ★ `.repeat(8);
@@ -142,6 +169,9 @@ function crearAfiche(a, vertical) {
   const texto = el('div', 'afiche__texto');
   texto.append(el('div', 'afiche__kicker', a.kicker || 'Promo del mes · Solo en el local'));
   if (a.pre) texto.append(el('div', 'afiche__pre', a.pre));
+  // Promo con nombre largo: el "2X" se achica (CSS) para que el precio no
+  // baje hasta el panda.
+  if (a.pre && a.name.length > 14) s.classList.add('afiche--largo');
   const nombre = el('div', 'afiche__nombre', a.name);
   nombre.style.fontSize = `${tamNombre(a, vertical)}px`;
   texto.append(nombre, el('div', 'afiche__sub', a.sub));
@@ -158,6 +188,111 @@ function crearAfiche(a, vertical) {
 
   s.append(fondo, texto, foto);
   return s;
+}
+
+// Slide de saludo horario: fondo petróleo, título gigante y logo.
+function crearAficheSaludo(a, vertical) {
+  const s = el('section', vertical ? 'vafiche xslide xslide--saludo' : 'afiche xslide xslide--saludo');
+  const info = textoSaludo();
+
+  const deco = el('div', 'xs-sal-deco');
+  deco.append(el('div', 'xs-sal-deco__c1'), el('div', 'xs-sal-deco__c2'));
+
+  const label  = el('div', 'xs-sal-label js-saludo-label', info.label);
+  const titulo = el('div', 'xs-sal-titulo js-saludo-titulo', info.titulo);
+  const sub    = el('div', 'xs-sal-sub js-saludo-sub', info.sub);
+
+  const logoWrap = el('div', 'xs-sal-logo');
+  const logoImg  = el('img');
+  logoImg.src = 'img/logo.webp';
+  logoImg.alt = 'Placeres Culposos';
+  logoWrap.append(logoImg);
+
+  s.append(deco, label, titulo, sub, logoWrap);
+  return s;
+}
+
+// Slide de redes sociales: fondo magenta, handle, 3 plataformas y QR.
+function crearAficheSocial(a, vertical) {
+  const s = el('section', vertical ? 'vafiche xslide xslide--social' : 'afiche xslide xslide--social');
+
+  const izq = el('div', 'xs-soc-izq');
+  izq.append(el('div', 'xs-soc-kicker', 'Encontranos en redes'));
+  izq.append(el('div', 'xs-soc-titulo', '¡SEGUINOS!'));
+  izq.append(el('div', 'xs-soc-handle', '@placeresculpososcr'));
+
+  const redes = el('div', 'xs-soc-redes');
+  [
+    { nombre: 'Instagram', abr: 'IG', color: '#C13584' },
+    { nombre: 'TikTok',    abr: 'TK', color: '#010101' },
+    { nombre: 'Facebook',  abr: 'FB', color: '#1877F2' },
+  ].forEach((p) => {
+    const red  = el('div', 'xs-soc-red');
+    const logo = el('div', 'xs-soc-red__logo', p.abr);
+    logo.style.background = p.color;
+    red.append(logo, el('div', 'xs-soc-red__nombre', p.nombre));
+    redes.append(red);
+  });
+  izq.append(redes);
+
+  const qrWrap = el('div', 'xs-soc-qr');
+  const qrImg  = el('img');
+  qrImg.src = 'img/qr-whatsapp.svg';
+  qrImg.alt = 'Escaneá para pedir por WhatsApp';
+  const qrLabel = el('div', 'xs-soc-qr__label');
+  const qrB = el('b', '', 'WhatsApp');
+  const qrS = el('span', '', '6456 4841');
+  qrLabel.append(qrB, qrS);
+  qrWrap.append(qrImg, qrLabel);
+
+  s.append(izq, qrWrap);
+  return s;
+}
+
+// Slide de prueba social: 4.8★ PedidosYa + +152K TikTok.
+function crearAfichePrueba(a, vertical) {
+  const s = el('section', vertical ? 'vafiche xslide xslide--prueba' : 'afiche xslide xslide--prueba');
+
+  const izq = el('div', 'xs-pr-izq');
+  izq.append(
+    el('div', 'xs-pr-estrellas', '★★★★★'),
+    el('div', 'xs-pr-nota', '4.8'),
+    el('div', 'xs-pr-plat', 'PedidosYa'),
+    el('div', 'xs-pr-opiniones', '90 opiniones'),
+  );
+
+  const der = el('div', 'xs-pr-der');
+  der.append(
+    el('div', 'xs-pr-vistas', '+152K'),
+    el('div', 'xs-pr-plat-tk', 'en TikTok'),
+    el('div', 'xs-pr-tik-label', '@placeresculpososcr'),
+    el('div', 'xs-pr-sub-tk', 'Nuestro video más visto'),
+  );
+
+  s.append(izq, el('div', 'xs-pr-sep'), der);
+  return s;
+}
+
+// Slide "antojo del día": póster del producto elegido por día de semana + sello.
+function crearAficheAntojoDelDia(a, vertical) {
+  const productos = AFICHES.filter((x) => !x.tipo && !x.promo);
+  const dia = new Date().getDay();
+  const prod = { ...productos[dia % productos.length], kicker: 'Antojo del día' };
+  const s = crearAficheProducto(prod, vertical);
+  s.classList.add('xslide--antojo');
+  const sello = el('div', 'xs-sello');
+  sello.append(el('span', '', 'ANTOJO\nDEL DÍA'));
+  s.append(sello);
+  return s;
+}
+
+// Dispatcher: delega al constructor apropiado según el tipo de slide.
+function crearAfiche(a, vertical) {
+  if (a.tipo === 'saludo')     return crearAficheSaludo(a, vertical);
+  if (a.tipo === 'social')     return crearAficheSocial(a, vertical);
+  if (a.tipo === 'prueba')     return crearAfichePrueba(a, vertical);
+  if (a.tipo === 'antojo-dia') return crearAficheAntojoDelDia(a, vertical);
+  return crearAficheProducto(a, vertical);
 }
 
 function armar() {
@@ -180,6 +315,8 @@ function mostrar() {
   $$('.js-panda').forEach((p) => p.classList.toggle('is-tea', a.panda === 'tea'));
   $$('.js-panda-img').forEach((img) => { img.src = `img/panda-${a.panda}.webp`; });
   $$('.js-burbuja').forEach((b) => { b.textContent = a.bubble; });
+  // El saludo es sensible al horario: actualizamos el texto cada vez que aparece.
+  if (a.tipo === 'saludo') actualizarSaludo();
   inicio = Date.now();
 }
 

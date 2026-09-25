@@ -1,1 +1,353 @@
-/* tv-vertical — ver comentario de pantalla.html */
+/* ================================================================
+   tv-vertical.css — Catálogo vertical 1080 × 1920
+   Placeres Culposos CR · TV de pie (portrait)
+
+   Scope: .lienzo.is-v y .formato--v ÚNICAMENTE.
+   Sin transition, animation ni @keyframes (son de tv-movimiento.css).
+   Carga después de pantalla.css; sobreescribe solo lo que se lista aquí.
+   ================================================================ */
+
+/* ── 1. HEADER: raíl magenta con separador dorado ─────────────────── */
+
+.lienzo.is-v .vbarra {
+  background: var(--magenta);
+  border-bottom: 5px solid var(--amarillo);
+  box-shadow: 0 5px 0 var(--petroleo);
+  /* z-index ya es 5 en pantalla.css */
+}
+
+/* Logo circular: anillo blanco + sombra petroleo visible sobre magenta */
+.lienzo.is-v .vbarra .barra__marca img {
+  border: 4px solid var(--blanco);
+  box-shadow: 4px 4px 0 var(--petroleo);
+  border-radius: 50%;
+}
+
+/* Nombre de marca: más grande y aireado */
+.lienzo.is-v .vbarra .barra__marca span {
+  font-size: 50px;
+  line-height: .92;
+  letter-spacing: .03em;
+  text-shadow: 4px 4px 0 var(--petroleo);
+}
+
+/* Reloj: más compacto */
+.lienzo.is-v .vbarra .reloj__h { font-size: 80px; }
+
+/* Estado: tamaño legible */
+.lienzo.is-v .vbarra .estado {
+  font-size: 17px;
+  padding: 8px 16px;
+  letter-spacing: .12em;
+}
+
+
+/* ── 2. AFICHE DESTACADO: panda ajustado ──────────────────────────── */
+/*
+   La foto (.vafiche .afiche__foto) está en: left 620px, top 30px,
+   w 410px, h 520px → ocupa x:[620,1030] y:[30,550] dentro de vdestacado.
+   El texto (.afiche__texto) está en: left 60px, w 560px → x:[60,620].
+   El panda (150×150) se posiciona en la esquina inferior derecha, por
+   DEBAJO de la foto, sin tapar el texto ni la foto principal.
+*/
+/* Integración: la foto se acorta (termina en y=500) y el panda va DEBAJO,
+   sin tocarla; el globo queda entre el texto (x<620) y el panda. */
+.lienzo.is-v .vafiche .afiche__foto { height: 470px; }
+.lienzo.is-v .panda--v {
+  right: 44px;
+  top: 530px;
+  width: 130px;
+  height: 130px;
+  z-index: 12;
+}
+
+/* Burbuja a la izquierda del panda (ya definida como tal en pantalla.css),
+   tamaño reducido para no invadir la foto */
+.lienzo.is-v .panda--v .panda__burbuja {
+  right: 124px;
+  top: 30px;
+  font-size: 19px;
+  max-width: 230px;
+  white-space: normal;
+  line-height: 1.25;
+  padding: 10px 16px;
+}
+
+
+/* ── 3. PANEL CATÁLOGO: contenedor petróleo ───────────────────────── */
+
+.lienzo.is-v .vcatalogo {
+  padding: 28px 34px 28px;
+  gap: 18px;
+  /* Sombra doble: amarillo abajo-derecha + línea magenta arriba */
+  box-shadow: 14px 14px 0 var(--amarillo);
+  border-top: 5px solid var(--magenta);
+}
+
+/* ── 3a. Cabecera de categoría ──────────────────────────────────────── */
+
+.lienzo.is-v .vcatalogo__head {
+  align-items: flex-start;
+  gap: 14px;
+  /* Franja de acento vertical amarilla a la izquierda */
+  border-left: 10px solid var(--amarillo);
+  padding-left: 20px;
+  /* Asegurar que el título no empuje a los dots fuera de vista */
+}
+
+/* El div con label + título no debe desbordar */
+.lienzo.is-v .vcatalogo__head > div:first-child {
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+/* Supertítulo "Nuestro menú" */
+.lienzo.is-v .vcatalogo__k {
+  font-size: 19px;
+  letter-spacing: .28em;
+  color: var(--turquesa-claro);
+}
+
+/* Nombre de categoría: bold, amarillo, con sombra petróleo */
+.lienzo.is-v .vcatalogo__titulo {
+  margin: 5px 0 0;
+  font-size: 86px;
+  line-height: .9;
+  color: var(--amarillo);
+  text-shadow: 6px 6px 0 rgba(0, 0, 0, .4);
+  overflow-wrap: anywhere;
+}
+
+/* Dots de navegación: no encoger, bien arriba */
+.lienzo.is-v .vcatalogo__puntos {
+  flex-shrink: 0;
+  align-self: flex-start;
+  padding-top: 10px;
+  gap: 12px;
+}
+
+.lienzo.is-v .vcatalogo__puntos span {
+  width: 18px;
+  height: 18px;
+  background: rgba(255, 255, 255, .2);
+}
+
+.lienzo.is-v .vcatalogo__puntos span.is-on {
+  background: var(--amarillo);
+  transform: scale(1.35);
+}
+
+
+/* ── 4. GRID ADAPTATIVO según cantidad de ítems ─────────────────────
+   Técnica: :has(> .vitem:first-child:nth-last-child(N)) detecta que hay
+   exactamente N hijos. Ajusta las filas para evitar celdas vacías.
+   ─────────────────────────────────────────────────────────────────── */
+
+/* Base override: conserva 2 columnas, pero reduce el gap */
+.lienzo.is-v .vcatalogo__grid {
+  gap: 16px;
+}
+
+/* 2 ítems (Salado) → 1 sola fila, tarjetas altas */
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(2)) {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+/* 3 ítems (Mangonadas) → 2 filas; el 3.º ocupa las 2 columnas */
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(3)) {
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(3)) > .vitem:last-child {
+  grid-column: 1 / -1;
+}
+
+/* 4 ítems (Fresas, Bubble Tea, Frappés, Postres) → 2 filas × 2 columnas */
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(4)) {
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+/* 5 ítems (Café) → 3 filas; el 5.º ocupa las 2 columnas */
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(5)) {
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+}
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(5)) > .vitem:last-child {
+  grid-column: 1 / -1;
+}
+
+
+/* ── 5. TARJETAS de ítems ─────────────────────────────────────────── */
+
+.lienzo.is-v .vitem {
+  background: var(--blanco);
+  color: var(--petroleo);
+  /* Sombra magenta para mantener la paleta */
+  box-shadow: 8px 8px 0 var(--magenta);
+}
+
+/* Foto: ocupa toda la altura de la tarjeta */
+.lienzo.is-v .vitem__foto {
+  width: 196px;
+  flex-shrink: 0;
+  background: var(--rosa);
+}
+
+.lienzo.is-v .vitem__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Sin foto: panda centrado sobre fondo rosa */
+.lienzo.is-v .vitem.sin-foto .vitem__foto img {
+  width: 68%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Cuerpo de la tarjeta */
+.lienzo.is-v .vitem__body {
+  padding: 14px 18px 14px 20px;
+  gap: 5px;
+  justify-content: center;
+}
+
+/* Nombre: Anton grande, alto contraste */
+.lienzo.is-v .vitem__nombre {
+  font-size: 38px;
+  line-height: 1;
+  color: var(--petroleo);
+  overflow-wrap: break-word;
+}
+
+/* Descripción: secundario pero legible a 3 m */
+.lienzo.is-v .vitem__desc {
+  font-size: 18px;
+  line-height: 1.3;
+  color: #4a6172;
+}
+
+/* Precio: pastilla amarilla · máximo impacto visual desde lejos */
+.lienzo.is-v .vitem__precio {
+  margin-top: 5px;
+  padding: 3px 16px 5px;
+  background: var(--amarillo);
+  color: var(--petroleo);
+  font-family: var(--font-display);
+  font-weight: 400;          /* Anton no tiene variantes de peso */
+  font-size: 44px;
+  line-height: 1;
+  box-shadow: 4px 4px 0 var(--petroleo);
+  align-self: flex-start;   /* no estirar todo el ancho */
+  display: block;
+}
+
+
+/* ── 6. TARJETA ANCHA (span 2 columnas, ítems 3.º y 5.º) ─────────── */
+
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(3)) > .vitem:last-child .vitem__foto,
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(5)) > .vitem:last-child .vitem__foto {
+  width: 280px;
+}
+
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(3)) > .vitem:last-child .vitem__nombre,
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(5)) > .vitem:last-child .vitem__nombre {
+  font-size: 52px;
+}
+
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(3)) > .vitem:last-child .vitem__desc,
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(5)) > .vitem:last-child .vitem__desc {
+  font-size: 22px;
+}
+
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(3)) > .vitem:last-child .vitem__precio,
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(5)) > .vitem:last-child .vitem__precio {
+  font-size: 54px;
+}
+
+
+/* ── 7. TARJETA ALTA (solo 2 ítems, fila única: Salado) ──────────────
+   Orientación columnar: foto arriba (55 % de altura), texto abajo.
+   Evita que nombres largos como "CHAPATAZO" se corten en columna angosta.
+   ─────────────────────────────────────────────────────────────────── */
+
+/* Cambio de eje: foto encima, cuerpo abajo */
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(2)) > .vitem {
+  flex-direction: column;
+}
+
+/* Foto: ancho completo, ocupa el 54 % de la tarjeta */
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(2)) > .vitem .vitem__foto {
+  width: 100%;
+  flex: 0 0 54%;
+  height: 54%;
+}
+
+/* Imagen con fotos reales: cover para llenar el bloque */
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(2)) > .vitem:not(.sin-foto) .vitem__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Sin foto: panda centrado en el bloque ancho */
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(2)) > .vitem.sin-foto .vitem__foto img {
+  width: auto;
+  height: 85%;
+  object-fit: contain;
+}
+
+/* Cuerpo: ocupa el espacio restante (46 %) */
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(2)) > .vitem .vitem__body {
+  flex: 1;
+  padding: 18px 24px;
+  gap: 7px;
+}
+
+/* Nombre grande — ahora el texto tiene el ancho completo de la tarjeta */
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(2)) > .vitem .vitem__nombre {
+  font-size: 50px;
+}
+
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(2)) > .vitem .vitem__desc {
+  font-size: 22px;
+  line-height: 1.35;
+}
+
+.lienzo.is-v .vcatalogo__grid:has(> .vitem:first-child:nth-last-child(2)) > .vitem .vitem__precio {
+  font-size: 54px;
+  padding: 3px 18px 5px;
+}
+
+
+/* ── 8. BARRA DE QR (WhatsApp) ────────────────────────────────────── */
+
+.lienzo.is-v .vqr {
+  /* Acento magenta a la izquierda: coherente con los cards */
+  border-left: 8px solid var(--magenta);
+  box-shadow: 8px 8px 0 var(--petroleo);
+}
+
+.lienzo.is-v .vqr img {
+  width: 68px;
+  height: 68px;
+}
+
+.lienzo.is-v .vqr b {
+  font-size: 30px;
+}
+
+.lienzo.is-v .vqr span {
+  font-size: 16px;
+  color: #4a6172;
+}
+
+.lienzo.is-v .vqr__handle {
+  font-size: 26px;
+  color: var(--magenta);
+}
+
+/* Integración: globo del panda en una o dos líneas (su bloque contenedor es
+   el panda de 130 px, así que sin width se encogía a una columna), y el sello
+   del "antojo del día" arriba a la izquierda de la foto, lejos del panda. */
+.lienzo.is-v .panda--v .panda__burbuja { width: max-content; max-width: 260px; }
+.lienzo.is-v .vafiche.xslide--antojo .xs-sello { right: auto; bottom: auto; left: 560px; top: 8px; }

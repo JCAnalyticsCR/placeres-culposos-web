@@ -1,1 +1,267 @@
-/* tv-movimiento — ver comentario de pantalla.html */
+/* =============================================================
+   tv-movimiento.css — Capa de movimiento cinematográfico
+   Carga DESPUÉS de pantalla.css y los demás agentes.
+
+   Solo animamos: transform, opacity.
+   Nada de width/height/top/left/backdrop-filter/blur en áreas grandes.
+   Todo debe resolverse antes de los 8 s por defecto del ciclo de afiches.
+   ============================================================= */
+
+/* ---- Contención para pseudo-elementos de efectos ----------
+   El barrido de luz vive en .afiche__fondo::after: los ::before/::after del
+   afiche son las cintas adhesivas de tv-horizontal.css. */
+.afiche  { overflow: hidden; }
+.vafiche { overflow: hidden; }
+
+
+/* =============================================================
+   1. BARRIDO DE LUZ — haz diagonal que cruza el afiche al entrar
+      Efecto "sheen de televisión": revela el contenido con estilo.
+   ============================================================= */
+@keyframes brillo-barrido {
+  0%   { transform: translateX(-130%); }
+  100% { transform: translateX(130%); }
+}
+
+.afiche.is-on .afiche__fondo::after,
+.vafiche.is-on .afiche__fondo::after {
+  content: '';
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(
+    108deg,
+    transparent          0%,
+    transparent          36%,
+    rgba(255,255,255,.20) 50%,
+    transparent          64%,
+    transparent          100%
+  );
+  animation: brillo-barrido .8s ease-out .3s 1 both;
+}
+
+
+/* =============================================================
+   2. KEN BURNS — zoom lento + deriva en la foto destacada
+      Empieza cuando la foto ya está posicionada (~0.9 s).
+      Dura hasta casi el final del ciclo (8 s).
+   ============================================================= */
+@keyframes ken-burns {
+  0%   { transform: scale(1.04) translate(  0%,  0%); }
+  100% { transform: scale(1.12) translate(-1.4%, .9%); }
+}
+
+.afiche.is-on  .afiche__foto .nitida,
+.vafiche.is-on .afiche__foto .nitida {
+  animation: ken-burns 8s ease-in-out .9s 1 forwards;
+}
+
+
+/* =============================================================
+   3. PRECIO — "stamp" con overshoot después de la transición base
+      La transición de pantalla.css tarda ~1.4 s en resolver;
+      el sello entra a 1.55 s para no chocar con ella.
+   ============================================================= */
+@keyframes sello {
+  0%   { transform: scale(1)    rotate(-2deg); }
+  38%  { transform: scale(1.14) rotate(-3.8deg); }
+  68%  { transform: scale(.955) rotate(-1deg); }
+  100% { transform: scale(1)    rotate(-2deg); }
+}
+
+.afiche.is-on  .afiche__precio,
+.vafiche.is-on .afiche__precio {
+  animation: sello .52s cubic-bezier(.3, 1.9, .4, 1) 1.55s 1 forwards;
+}
+
+
+/* =============================================================
+   4. "2X" — latido doble después de la entrada
+      La transición de pantalla.css resuelve ~1.14 s;
+      esperamos hasta 1.3 s y hacemos dos pulsos.
+   ============================================================= */
+@keyframes latido-pre {
+  0%,  100% { transform: scale(1)    rotate(-4deg); }
+  14%        { transform: scale(1.07) rotate(-5.2deg); }
+  28%        { transform: scale(1)    rotate(-4deg); }
+  42%        { transform: scale(1.045) rotate(-4.6deg); }
+  56%        { transform: scale(1)    rotate(-4deg); }
+}
+
+.afiche.is-on  .afiche__pre,
+.vafiche.is-on .afiche__pre {
+  animation: latido-pre 1.7s ease-in-out 1.3s 2 forwards;
+}
+
+
+/* =============================================================
+   5. BURBUJA DEL PANDA — rebote periódico para dar vida
+      CSS no detecta el cambio de texto; animamos siempre
+      con un loop natural que hace que la burbuja llame la atención.
+   ============================================================= */
+@keyframes burbuja-vida {
+  0%, 55%, 100% { transform: scale(1)    translateY(0);    }
+  14%            { transform: scale(1.09) translateY(-7px); }
+  28%            { transform: scale(.97)  translateY( 3px); }
+  42%            { transform: scale(1.03) translateY(-2px); }
+}
+
+.panda__burbuja {
+  transform-origin: left center;
+  animation: burbuja-vida 4.2s ease-in-out 2s infinite;
+}
+
+
+/* =============================================================
+   6. PUNTO DE ESTADO — respiración con escala (reemplaza pulso base)
+   ============================================================= */
+@keyframes respirar-punto {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(245, 210, 74, .85);
+  }
+  50% {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 14px rgba(245, 210, 74, 0);
+  }
+}
+
+.estado__punto {
+  animation: respirar-punto 2.5s ease-in-out infinite;
+}
+
+
+/* =============================================================
+   7. KICKER — ligero sacudón lateral después de su transición
+      La transición de pantalla.css resuelve ~0.92 s.
+   ============================================================= */
+@keyframes kicker-sacudon {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX( 6px); }
+  40%  { transform: translateX(-4px); }
+  60%  { transform: translateX( 3px); }
+  80%  { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+.afiche.is-on  .afiche__kicker,
+.vafiche.is-on .afiche__kicker {
+  animation: kicker-sacudon .45s ease-in-out 1s 1 forwards;
+}
+
+
+/* =============================================================
+   8. TARJETAS DEL CATÁLOGO VERTICAL — entrada escalonada
+      Las tarjetas se recrean en cada cambio de categoría;
+      la animación CSS se reinicia sola con el nuevo nodo.
+   ============================================================= */
+@keyframes vitem-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0)    scale(1);
+  }
+}
+
+.vitem {
+  animation: vitem-entrada .44s cubic-bezier(.2, .8, .2, 1) both;
+}
+.vitem:nth-child(1) { animation-delay: .04s; }
+.vitem:nth-child(2) { animation-delay: .12s; }
+.vitem:nth-child(3) { animation-delay: .20s; }
+.vitem:nth-child(4) { animation-delay: .28s; }
+.vitem:nth-child(5) { animation-delay: .36s; }
+.vitem:nth-child(6) { animation-delay: .44s; }
+
+
+/* =============================================================
+   9. TÍTULO DE CATEGORÍA — pop con overshoot al re-aparecer
+      Cuando .is-cambio se retira, pantalla.css reactiva la visibilidad;
+      tomamos el control con nuestra animación más dramática.
+      Selector :not(.is-cambio) vuelve a coincidir → animación reinicia.
+   ============================================================= */
+@keyframes titulo-rebote {
+  0%   { opacity: 0; transform: translateY(22px) scale(.95); }
+  65%  { opacity: 1; transform: translateY(-5px)  scale(1.03); }
+  100% { opacity: 1; transform: translateY(0)     scale(1); }
+}
+
+.vcatalogo:not(.is-cambio) .vcatalogo__titulo {
+  animation: titulo-rebote .56s cubic-bezier(.3, 1.6, .4, 1) .06s 1 both;
+}
+
+
+/* =============================================================
+   10. MARQUEE PAUSADO EN AFICHES INACTIVOS
+       (ya en pantalla.css; repetimos para sobrevivir sobreescrituras
+        de otros agentes)
+   ============================================================= */
+.afiche:not(.is-on)  .afiche__fondo div { animation-play-state: paused; }
+.vafiche:not(.is-on) .afiche__fondo div { animation-play-state: paused; }
+
+
+/* =============================================================
+   REDUCED MOTION
+   Eliminar todas las animaciones del módulo; estados finales visibles.
+   ============================================================= */
+@media (prefers-reduced-motion: reduce) {
+
+  /* Barrido de luz: ocultar el pseudo-elemento */
+  .afiche.is-on .afiche__fondo::after,
+  .vafiche.is-on .afiche__fondo::after {
+    display: none;
+  }
+
+  /* Ken Burns: sin zoom, imagen estática */
+  .afiche.is-on  .afiche__foto .nitida,
+  .vafiche.is-on .afiche__foto .nitida {
+    animation: none;
+    transform: none;
+  }
+
+  /* Precio, 2X, kicker: sin animación adicional (la transición base de
+     pantalla.css ya gestiona la entrada) */
+  .afiche.is-on  .afiche__precio,
+  .vafiche.is-on .afiche__precio,
+  .afiche.is-on  .afiche__pre,
+  .vafiche.is-on .afiche__pre,
+  .afiche.is-on  .afiche__kicker,
+  .vafiche.is-on .afiche__kicker {
+    animation: none;
+  }
+
+  /* Burbuja: visible, sin movimiento */
+  .panda__burbuja {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Punto de estado: dejar que pantalla.css lo anule también con su
+     bloque @media (ya lo hace con animation: none) */
+  .estado__punto {
+    animation: none;
+  }
+
+  /* Tarjetas: visibles de inmediato, sin escalonado */
+  .vitem,
+  .vitem:nth-child(1),
+  .vitem:nth-child(2),
+  .vitem:nth-child(3),
+  .vitem:nth-child(4),
+  .vitem:nth-child(5),
+  .vitem:nth-child(6) {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Título de categoría: visible directamente */
+  .vcatalogo:not(.is-cambio) .vcatalogo__titulo {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+}

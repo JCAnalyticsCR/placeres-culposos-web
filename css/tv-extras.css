@@ -1,1 +1,393 @@
-/* tv-extras — ver comentario de pantalla.html */
+/* tv-extras.css — slides de marca: saludo horario, redes sociales,
+   prueba social y antojo del día.
+   Autoría: pantalla.js:crearAfiche{Saludo|Social|Prueba|AntojoDelDia}.
+
+   Reglas de esta hoja:
+   • Sin @keyframes ni transition (son de tv-movimiento.css).
+   • Los hijos de estos slides son visibles por defecto; el fade
+     in/out lo maneja .afiche.is-on / .vafiche.is-on en pantalla.css.
+   • Selectores con .afiche.xslide--* (H 1920×1080) y
+     .vafiche.xslide--* (V 1080×690). */
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE SALUDO (xslide--saludo)
+   Fondo petróleo · título gigante · logo circular derecha
+   ═══════════════════════════════════════════════════════════ */
+
+.afiche.xslide--saludo,
+.vafiche.xslide--saludo {
+  background: var(--petroleo);
+  overflow: hidden;
+}
+
+/* Círculos decorativos de fondo */
+.xs-sal-deco {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.xs-sal-deco__c1 {
+  position: absolute;
+  width: 900px; height: 900px;
+  border-radius: 50%;
+  background: var(--magenta);
+  opacity: .13;
+  right: -200px; top: -260px;
+}
+.xs-sal-deco__c2 {
+  position: absolute;
+  width: 480px; height: 480px;
+  border-radius: 50%;
+  background: var(--turquesa-claro);
+  opacity: .11;
+  left: -130px; bottom: -170px;
+}
+
+/* Etiqueta pequeña de horario */
+.xs-sal-label {
+  position: absolute;
+  left: 100px; top: 172px;
+  font-family: var(--font-body);
+  font-weight: 700; font-size: 30px;
+  letter-spacing: .3em; text-transform: uppercase;
+  color: var(--turquesa-claro);
+}
+
+/* Título gigante — white-space: pre-line respeta los \n del textContent */
+.xs-sal-titulo {
+  position: absolute;
+  left: 100px; top: 218px;
+  font-family: var(--font-display);
+  font-size: 200px; line-height: .87;
+  text-transform: uppercase;
+  color: var(--blanco);
+  text-shadow: 14px 14px 0 var(--magenta);
+  white-space: pre-line;
+}
+
+/* Subtexto motivacional — comienza a 260px para no quedar detrás del panda
+   (círculo 40-230px + burbuja hasta ~450px); el override vertical lo reajusta. */
+.xs-sal-sub {
+  position: absolute;
+  left: 260px; bottom: 140px;
+  font-size: 50px; font-weight: 600;
+  color: var(--amarillo);
+  max-width: 740px;
+  line-height: 1.3;
+}
+
+/* Círculo con el logo, centrado a la derecha */
+.xs-sal-logo {
+  position: absolute;
+  right: 80px; top: 50%;
+  transform: translateY(-50%);
+  width: 520px; height: 520px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 20px solid var(--magenta);
+  box-shadow: 22px 22px 0 var(--amarillo);
+  background: var(--rosa);
+}
+.xs-sal-logo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+/* ---- Vertical (1080×690) ---- */
+.vafiche.xslide--saludo .xs-sal-deco__c1 { width: 520px; height: 520px; right: -120px; top: -160px; }
+.vafiche.xslide--saludo .xs-sal-deco__c2 { width: 280px; height: 280px; left: -70px; bottom: -100px; }
+.vafiche.xslide--saludo .xs-sal-label    { font-size: 20px; left: 60px; top: 55px; }
+.vafiche.xslide--saludo .xs-sal-titulo   { font-size: 104px; left: 60px; top: 92px; }
+.vafiche.xslide--saludo .xs-sal-sub      { font-size: 30px; left: 60px; bottom: 50px; max-width: 580px; }
+.vafiche.xslide--saludo .xs-sal-logo     {
+  width: 280px; height: 280px;
+  right: 38px;
+  border-width: 13px;
+  box-shadow: 13px 13px 0 var(--amarillo);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE SOCIAL (xslide--social)
+   Fondo magenta · "¡SEGUINOS!" · 3 plataformas · QR
+   ═══════════════════════════════════════════════════════════ */
+
+.afiche.xslide--social,
+.vafiche.xslide--social {
+  background: var(--magenta);
+  overflow: hidden;
+}
+
+/* Columna izquierda */
+.xs-soc-izq {
+  position: absolute;
+  left: 80px; top: 148px;
+  width: 1020px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+
+.xs-soc-kicker {
+  font-family: var(--font-body);
+  font-weight: 700; font-size: 28px;
+  letter-spacing: .32em; text-transform: uppercase;
+  color: var(--rosa);
+}
+
+.xs-soc-titulo {
+  font-family: var(--font-display);
+  font-size: 240px; line-height: .85;
+  text-transform: uppercase;
+  color: var(--blanco);
+  text-shadow: 14px 14px 0 var(--petroleo);
+}
+
+.xs-soc-handle {
+  font-family: var(--font-display);
+  font-size: 72px; line-height: 1;
+  color: var(--amarillo);
+  text-shadow: 6px 6px 0 var(--petroleo);
+}
+
+/* Fila de plataformas */
+.xs-soc-redes {
+  display: flex; gap: 22px;
+  margin-top: 14px;
+}
+.xs-soc-red {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 26px;
+  background: var(--petroleo);
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, .28);
+}
+.xs-soc-red__logo {
+  flex-shrink: 0;
+  width: 60px; height: 60px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-size: 26px; color: var(--blanco);
+}
+.xs-soc-red__nombre {
+  font-family: var(--font-display);
+  font-size: 40px; text-transform: uppercase;
+  color: var(--blanco);
+}
+
+/* Bloque QR a la derecha */
+.xs-soc-qr {
+  position: absolute;
+  right: 58px; top: 50%;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+  padding: 32px;
+  background: var(--blanco);
+  box-shadow: 16px 16px 0 var(--petroleo);
+}
+.xs-soc-qr img {
+  width: 360px; height: 360px;
+}
+.xs-soc-qr__label { text-align: center; }
+.xs-soc-qr__label b {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 400; font-size: 36px;
+  text-transform: uppercase;
+  color: var(--petroleo);
+}
+.xs-soc-qr__label span {
+  display: block;
+  font-size: 28px; font-weight: 700;
+  color: var(--magenta);
+}
+
+/* ---- Vertical (1080×690) ---- */
+.vafiche.xslide--social .xs-soc-izq       { left: 46px; top: 44px; width: 620px; gap: 8px; }
+.vafiche.xslide--social .xs-soc-kicker    { font-size: 17px; letter-spacing: .25em; }
+.vafiche.xslide--social .xs-soc-titulo    { font-size: 126px; }
+.vafiche.xslide--social .xs-soc-handle    { font-size: 42px; }
+.vafiche.xslide--social .xs-soc-redes     { gap: 10px; margin-top: 6px; }
+.vafiche.xslide--social .xs-soc-red       { padding: 10px 14px; gap: 10px; }
+.vafiche.xslide--social .xs-soc-red__logo { width: 42px; height: 42px; font-size: 18px; border-radius: 8px; }
+.vafiche.xslide--social .xs-soc-red__nombre { font-size: 26px; }
+.vafiche.xslide--social .xs-soc-qr        { right: 28px; padding: 20px; gap: 12px; box-shadow: 10px 10px 0 var(--petroleo); }
+.vafiche.xslide--social .xs-soc-qr img    { width: 210px; height: 210px; }
+.vafiche.xslide--social .xs-soc-qr__label b    { font-size: 22px; }
+.vafiche.xslide--social .xs-soc-qr__label span { font-size: 17px; }
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE PRUEBA SOCIAL (xslide--prueba)
+   Fondo amarillo · 4.8★ PedidosYa | +152K TikTok
+   ═══════════════════════════════════════════════════════════ */
+
+.afiche.xslide--prueba,
+.vafiche.xslide--prueba {
+  background: var(--amarillo);
+  overflow: hidden;
+}
+
+/* Columna izquierda: PedidosYa */
+.xs-pr-izq {
+  position: absolute;
+  left: 80px; top: 148px;
+  width: 820px;
+}
+.xs-pr-estrellas {
+  font-size: 76px;
+  color: #E06400;
+  text-shadow: 4px 4px 0 var(--petroleo);
+  letter-spacing: 6px;
+  line-height: 1;
+}
+.xs-pr-nota {
+  font-family: var(--font-display);
+  font-size: 370px; line-height: .82;
+  color: var(--petroleo);
+  text-shadow: 18px 18px 0 var(--magenta);
+}
+.xs-pr-plat {
+  font-family: var(--font-display);
+  font-size: 88px; line-height: 1;
+  text-transform: uppercase;
+  color: var(--magenta);
+  text-shadow: 6px 6px 0 var(--petroleo);
+}
+.xs-pr-opiniones {
+  font-size: 34px; font-weight: 600;
+  color: var(--petroleo);
+  margin-top: 8px;
+}
+
+/* Separador vertical */
+.xs-pr-sep {
+  position: absolute;
+  left: 944px; top: 140px; bottom: 80px;
+  width: 8px;
+  background: var(--petroleo);
+  box-shadow: 6px 6px 0 var(--magenta);
+}
+
+/* Columna derecha: TikTok */
+.xs-pr-der {
+  position: absolute;
+  left: 1000px; top: 148px; right: 56px;
+}
+.xs-pr-vistas {
+  font-family: var(--font-display);
+  font-size: 250px; line-height: .82;
+  color: var(--petroleo);
+  text-shadow: 14px 14px 0 var(--magenta);
+}
+.xs-pr-plat-tk {
+  font-family: var(--font-display);
+  font-size: 86px; line-height: 1;
+  text-transform: uppercase;
+  color: var(--magenta);
+  text-shadow: 6px 6px 0 var(--petroleo);
+}
+.xs-pr-tik-label {
+  font-family: var(--font-display);
+  font-size: 50px;
+  color: var(--petroleo);
+  margin-top: 10px;
+}
+.xs-pr-sub-tk {
+  font-size: 30px; font-weight: 600;
+  color: #5c3800;
+  margin-top: 12px;
+}
+
+/* ---- Vertical (1080×690) ---- */
+.vafiche.xslide--prueba .xs-pr-izq        { left: 46px; top: 30px; width: 460px; }
+.vafiche.xslide--prueba .xs-pr-estrellas  { font-size: 48px; }
+.vafiche.xslide--prueba .xs-pr-nota       { font-size: 190px; }
+.vafiche.xslide--prueba .xs-pr-plat       { font-size: 54px; }
+.vafiche.xslide--prueba .xs-pr-opiniones  { font-size: 22px; }
+.vafiche.xslide--prueba .xs-pr-sep        { left: 546px; top: 30px; bottom: 30px; width: 6px; }
+.vafiche.xslide--prueba .xs-pr-der        { left: 580px; top: 30px; right: 28px; }
+.vafiche.xslide--prueba .xs-pr-vistas     { font-size: 134px; }
+.vafiche.xslide--prueba .xs-pr-plat-tk    { font-size: 54px; }
+.vafiche.xslide--prueba .xs-pr-tik-label  { font-size: 32px; margin-top: 6px; }
+.vafiche.xslide--prueba .xs-pr-sub-tk     { font-size: 20px; margin-top: 8px; }
+
+/* ═══════════════════════════════════════════════════════════
+   SLIDE ANTOJO DEL DÍA (xslide--antojo)
+   Usa el layout de producto + sello circular girado
+   ═══════════════════════════════════════════════════════════ */
+
+/* Sello circular superpuesto en el área de la foto */
+.xs-sello {
+  position: absolute;
+  right: 60px; bottom: 100px;
+  width: 218px; height: 218px;
+  border-radius: 50%;
+  background: var(--amarillo);
+  border: 10px solid var(--petroleo);
+  box-shadow: 10px 10px 0 var(--petroleo);
+  display: flex; align-items: center; justify-content: center;
+  transform: rotate(-14deg);
+  z-index: 12;
+}
+.xs-sello span {
+  font-family: var(--font-display);
+  font-size: 33px; line-height: 1.08;
+  text-align: center;
+  color: var(--petroleo);
+  text-transform: uppercase;
+  white-space: pre-line;
+}
+
+/* Vertical */
+.vafiche.xslide--antojo .xs-sello {
+  right: 16px; bottom: 100px;
+  width: 136px; height: 136px;
+  border-width: 7px;
+  box-shadow: 7px 7px 0 var(--petroleo);
+}
+.vafiche.xslide--antojo .xs-sello span { font-size: 21px; }
+
+/* ── Integración: reseñas y redes simétricas, y la cinta siempre visible ── */
+/* La cinta inferior va por encima de cualquier diapositiva especial. */
+.lienzo:not(.is-v) .formato--h .cinta { z-index: 30; }
+
+/* Horizontal: dos columnas iguales (780 px) centradas a cada lado del
+   separador, contenido centrado y sin solapes entre líneas; todo termina
+   antes de la altura del panda (y≈800). */
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-izq,
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-der {
+  top: 150px; bottom: auto; right: auto; width: 780px; height: 640px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; text-align: center;
+}
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-izq { left: 90px; }
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-der { left: 1050px; }
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-sep { left: 956px; top: 190px; bottom: auto; height: 560px; }
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-nota,
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-vistas { font-size: 250px; line-height: .9; }
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-estrellas { font-size: 64px; }
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-plat,
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-plat-tk { font-size: 80px; line-height: 1; }
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-opiniones,
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-sub-tk { font-size: 32px; margin-top: 0; }
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-tik-label { font-size: 44px; margin-top: 0; }
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-nota,
+.lienzo:not(.is-v) .afiche.xslide--prueba .xs-pr-vistas { margin-bottom: 18px; }
+
+/* Vertical: las mismas dos columnas, centradas en el área destacada y por
+   encima del panda (que ocupa la esquina inferior derecha). */
+.lienzo.is-v .vafiche.xslide--prueba .xs-pr-izq,
+.lienzo.is-v .vafiche.xslide--prueba .xs-pr-der {
+  top: 30px; bottom: auto; right: auto; width: 450px; height: 490px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; text-align: center;
+}
+.lienzo.is-v .vafiche.xslide--prueba .xs-pr-izq { left: 60px; }
+.lienzo.is-v .vafiche.xslide--prueba .xs-pr-der { left: 570px; }
+.lienzo.is-v .vafiche.xslide--prueba .xs-pr-sep { left: 536px; top: 70px; bottom: auto; height: 410px; }
+.lienzo.is-v .vafiche.xslide--prueba .xs-pr-nota,
+.lienzo.is-v .vafiche.xslide--prueba .xs-pr-vistas { font-size: 160px; line-height: .9; margin-bottom: 12px; }
+.lienzo.is-v .vafiche.xslide--prueba .xs-pr-estrellas { font-size: 44px; }
+.lienzo.is-v .vafiche.xslide--prueba .xs-pr-plat,
+.lienzo.is-v .vafiche.xslide--prueba .xs-pr-plat-tk { font-size: 58px; line-height: 1; }
+.lienzo.is-v .vafiche.xslide--prueba .xs-pr-opiniones,
+.lienzo.is-v .vafiche.xslide--prueba .xs-pr-sub-tk { font-size: 26px; margin-top: 0; }
+.lienzo.is-v .vafiche.xslide--prueba .xs-pr-tik-label { font-size: 32px; margin-top: 0; }
