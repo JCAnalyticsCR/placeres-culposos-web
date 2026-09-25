@@ -748,6 +748,8 @@ html:has(.drawer[open]) { overflow: hidden; }
 }
 .credito img { height: 34px; width: auto; }
 .credito a:hover { opacity: 1; }
+/* En teléfono el panda flota a la derecha: el crédito se va a la izquierda. */
+@media (max-width: 859.98px) { .credito { justify-content: flex-start; padding-right: clamp(140px, 40vw, 200px); } }
 /* El aire para el botón flotante ahora lo pone el crédito. */
 .footer { padding-bottom: 40px; }
 
