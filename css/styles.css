@@ -739,6 +739,18 @@ html:has(.drawer[open]) { overflow: hidden; }
 /* Ocupa toda la fila y deja aire a la derecha: ahí flota el panda. */
 .footer__copy { grid-column: 1 / -1; padding-right: clamp(140px, 16vw, 200px); font-size: 12px; text-transform: uppercase; letter-spacing: .1em; opacity: .7; }
 
+/* Crédito al final de todo, en el mismo azul del logo. */
+.credito {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin: 0; padding: 16px var(--gutter) calc(96px + env(safe-area-inset-bottom, 0px));
+  background: #0B1424; color: rgba(255, 255, 255, .75);
+  font-size: 12px; text-transform: uppercase; letter-spacing: .12em;
+}
+.credito img { height: 34px; width: auto; }
+.credito a:hover { opacity: 1; }
+/* El aire para el botón flotante ahora lo pone el crédito. */
+.footer { padding-bottom: 40px; }
+
 /* ---------- Elementos fijos ---------- */
 
 .panda {
