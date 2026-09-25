@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es-CR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self'; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<title>Placeres Culposos · Pantalla del local</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#E3257B">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/pantalla.css?v=20260924m">
+<script src="js/datos.js?v=20260924m" defer></script>
+<script src="js/pantalla.js?v=20260924m" defer></script>
+</head>
+<!-- Pantalla del local (TV de 32" en horizontal, o vertical con ?v=1).
+     Se abre en el navegador de la TV y se pone a pantalla completa con un
+     toque o la tecla F. Rota promos, menú y fotos sin intervención. -->
+<body class="tv">
+
+<main class="tv__escena" id="escena" aria-live="off">
+  <!-- Las diapositivas las arma pantalla.js con los datos de datos.js -->
+</main>
+
+<aside class="tv__lado">
+  <div class="reloj">
+    <div class="reloj__hora"><span id="hora">00:00</span><span class="reloj__sufijo" id="sufijo">p. m.</span></div>
+    <div class="reloj__fecha" id="fecha">—</div>
+  </div>
+
+  <div class="estado" id="estado">
+    <span class="estado__punto"></span>
+    <span id="estado-texto">Abierto hoy · 1:00 a 9:00 p. m.</span>
+  </div>
+
+  <div class="redes-tv">
+    <div class="redes-tv__marco" id="foto-red">
+      <img id="foto-red-img" src="img/pc_31.webp" alt="" decoding="async">
+      <span id="foto-red-tag">Instagram</span>
+    </div>
+    <div class="redes-tv__handle">@placeresculpososcr</div>
+  </div>
+
+  <div class="qr">
+    <img src="img/qr-whatsapp.svg" width="312" height="312" alt="Código QR para pedir por WhatsApp">
+    <div>
+      <b>Pedí desde la mesa</b>
+      <span>Escaneá y escribinos por WhatsApp</span>
+    </div>
+  </div>
+
+</aside>
+<img class="panda-tv" src="img/panda-tea.webp" width="340" height="300" alt="" decoding="async">
+
+<div class="cinta" aria-hidden="true">
+  <div class="cinta__track">
+    <span>Fresas con crema ★ Bubble tea ★ Mangonadas ★ Frappés ★ Café ★ Crepes ★ Bingsu ★ Chapatazo ★ Pedí al 6456 4841 ★ </span><span>Fresas con crema ★ Bubble tea ★ Mangonadas ★ Frappés ★ Café ★ Crepes ★ Bingsu ★ Chapatazo ★ Pedí al 6456 4841 ★ </span>
+  </div>
+</div>
+
+<button class="tv__full" id="btn-full" type="button">Pantalla completa</button>
+
+</body>
+</html>

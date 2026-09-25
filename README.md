@@ -17,8 +17,11 @@ formularios: los pedidos se hacen por WhatsApp.
 | Archivo | Contenido |
 |---|---|
 | `index.html` | Página única con todas las secciones |
+| `pantalla.html` | Pantalla del local (TV): rota promos, menú y fotos; reloj, estado y QR de WhatsApp |
+| `css/pantalla.css` / `js/pantalla.js` | Estilos y lógica de la pantalla del local |
+| `js/datos.js` | Datos compartidos: `MENU`, `PROMOS` y `FOTOS_REDES` (los usan la landing y la pantalla) |
 | `css/styles.css` | Estilos, tokens de color y las duraciones de movimiento (`--dur-*`) |
-| `js/app.js` | Datos del menú (`MENU`), filtro, menú móvil, carrusel de promos y animaciones por scroll |
+| `js/app.js` | Filtro del menú, menú móvil, carrusel de promos y animaciones por scroll |
 | `img/` | Fotos optimizadas en WebP, logo, stickers del panda, favicon e imagen para compartir (`og.jpg`) |
 | `img/vaso/` | Secuencia del vaso 3D: `g/` 1000x1250 y `c/` 600x750, cuadros `00`-`80` |
 | `tools/optimizar-imagenes.py` | Regenera `img/` a partir de las fotos originales |
@@ -39,7 +42,7 @@ o dos minutos.
 
 ## Cambiar el menú
 
-Editar el arreglo `MENU` al inicio de `js/app.js`. Cada producto lleva
+Editar el arreglo `MENU` en `js/datos.js` (también alimenta la pantalla del local). Cada producto lleva
 `cat` (categoría; los filtros salen solos de las categorías que existan),
 `name`, `desc`, `price`, `img` (nombre del archivo en `img/` sin extensión)
 y `pos` (encuadre de la foto, `object-position`). `ing` es la lista de
@@ -118,6 +121,29 @@ cambios rápido: `--frames 0,120,240 --samples 24 --scale 50`. Los tiempos
 de cada paso están en las constantes `F_*` de `vaso.py`; si cambian,
 actualizar los tramos de `escribirPasos()` en `app.js`. `render/` no se
 versiona.
+
+## Pantalla del local (TV)
+
+`pantalla.html` es la señalización para las tres TV de 32". En el navegador
+de la TV (o de un stick/mini PC conectado) se abre
+`https://jcanalyticscr.github.io/placeres-culposos-web/pantalla.html` y se
+toca "Pantalla completa" (o la tecla F). Rota sola: menú por categoría,
+promos del mes, la estrella de la casa y una invitación a seguir en redes;
+a la derecha, hora y fecha en vivo, abierto/cerrado según el horario, una
+foto de redes que va cambiando y el QR para pedir por WhatsApp desde la mesa.
+
+Parámetros en la URL:
+
+| Parámetro | Efecto |
+|---|---|
+| `?v=1` | Versión vertical (franja arriba), para una TV de pie |
+| `?seg=12` | Segundos por diapositiva (por defecto 9) |
+| `?sinboton` | Oculta el botón de pantalla completa (modo kiosco) |
+
+Se combinan: `pantalla.html?v=1&seg=12&sinboton`. El horario de
+abierto/cerrado está en `HORARIO` dentro de `js/pantalla.js` (PENDIENTE:
+confirmar con el cliente). Sin internet la TV no carga la página: dejar la
+pestaña abierta y el navegador se encarga de la caché.
 
 ## Pendientes antes de lanzar
 
