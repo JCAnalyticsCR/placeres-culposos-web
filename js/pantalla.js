@@ -4,7 +4,8 @@
    Parámetros en la URL:
      ?v=1 / ?h=1 fuerzan vertical u horizontal (por defecto, según la pantalla)
      ?seg=10     segundos por diapositiva (por defecto 9)
-     ?sinboton   oculta el botón de pantalla completa (para el kiosco) */
+     ?sinboton   oculta el botón de pantalla completa y la cortina (kiosco)
+     ?auto       salta la cortina (la TV ya arranca en pantalla completa) */
 
 'use strict';
 
@@ -198,6 +199,17 @@ function initFull() {
   });
   // Al tocar en cualquier parte (TV táctil o mouse) también entra.
   document.getElementById('escena').addEventListener('click', pedir);
+
+  // Cortina de bienvenida: el toque del usuario es lo que permite entrar a
+  // pantalla completa (los navegadores no lo dejan sin gesto).
+  const cortina = document.getElementById('cortina');
+  const iniciar = () => {
+    pedir();
+    cortina.classList.add('is-out');
+    setTimeout(() => cortina.remove(), 700);
+  };
+  document.getElementById('btn-iniciar').addEventListener('click', iniciar);
+  if (params.has('sinboton') || params.has('auto')) cortina.remove();
 }
 
 reloj();

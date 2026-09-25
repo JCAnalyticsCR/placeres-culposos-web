@@ -736,6 +736,7 @@ html:has(.drawer[open]) { overflow: hidden; }
   transition: background-color var(--dur-micro), border-color var(--dur-micro);
 }
 .footer__links a:hover { background: var(--amarillo); border-color: var(--amarillo); color: var(--petroleo); opacity: 1; }
+.footer__links .footer__tv { background: var(--amarillo); border-color: var(--amarillo); color: var(--petroleo); }
 /* Ocupa toda la fila y deja aire a la derecha: ahí flota el panda. */
 .footer__copy { grid-column: 1 / -1; padding-right: clamp(140px, 16vw, 200px); font-size: 12px; text-transform: uppercase; letter-spacing: .1em; opacity: .7; }
 

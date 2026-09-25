@@ -242,3 +242,32 @@ body.tv--vertical .promo-card__name { font-size: 7vh; }
   body.tv--vertical .slide--redes .qr-big img { width: 30vh; height: 30vh; }
   .cinta__track span { font-size: 2.6vh; }
 }
+
+/* ---------- Cortina de bienvenida ---------- */
+.cortina {
+  position: fixed; inset: 0; z-index: 20;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.2vh;
+  padding: 6vh 6vw; text-align: center;
+  background: var(--magenta);
+  background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .06) 0 1.4vh, transparent 1.4vh 3.2vh);
+  cursor: auto;
+  transition: opacity .6s var(--ease), transform .6s var(--ease);
+}
+.cortina.is-out { opacity: 0; transform: scale(1.04); pointer-events: none; }
+.cortina__logo { width: 16vh; height: 16vh; box-shadow: 1vh 1vh 0 var(--petroleo); border-radius: 50%; }
+.cortina__titulo { margin: 0; font-family: var(--font-display); font-size: 10vh; line-height: .95; text-transform: uppercase; text-shadow: .8vh .8vh 0 var(--petroleo); }
+.cortina__texto { margin: 0; max-width: 60vw; font-size: 2.6vh; font-weight: 500; }
+.cortina__btn {
+  margin-top: 1vh; padding: 2.4vh 4vw; border: 0; cursor: pointer;
+  background: var(--amarillo); color: var(--petroleo);
+  font: 700 2.8vh var(--font-body); letter-spacing: .1em; text-transform: uppercase;
+  box-shadow: .8vh .8vh 0 var(--petroleo);
+  transition: transform .2s;
+}
+.cortina__btn:hover { transform: translate(-.3vh, -.3vh); }
+.cortina__nota { margin: 0; font-size: 1.8vh; opacity: .8; letter-spacing: .1em; text-transform: uppercase; }
+.cortina__volver { margin-top: 2vh; color: var(--blanco); font-weight: 700; font-size: 1.9vh; text-decoration: underline; text-underline-offset: .4em; }
+@media (max-width: 700px) {
+  .cortina__titulo { font-size: 7vh; }
+  .cortina__texto { max-width: 90vw; font-size: 2.2vh; }
+}

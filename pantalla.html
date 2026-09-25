@@ -11,9 +11,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/pantalla.css?v=20260924m">
-<script src="js/datos.js?v=20260924m" defer></script>
-<script src="js/pantalla.js?v=20260924m" defer></script>
+<link rel="stylesheet" href="css/pantalla.css?v=20260924q">
+<script src="js/datos.js?v=20260924q" defer></script>
+<script src="js/pantalla.js?v=20260924q" defer></script>
 </head>
 <!-- Pantalla del local (TV de 32" en horizontal, o vertical con ?v=1).
      Se abre en el navegador de la TV y se pone a pantalla completa con un
@@ -61,6 +61,17 @@
 </div>
 
 <button class="tv__full" id="btn-full" type="button">Pantalla completa</button>
+
+<!-- Cortina de bienvenida: un toque entra a pantalla completa y arranca el
+     modo presentación. Se salta con ?sinboton (kiosco ya configurado). -->
+<div class="cortina" id="cortina">
+  <img class="cortina__logo" src="img/logo.webp" width="192" height="192" alt="">
+  <h1 class="cortina__titulo">Modo presentación</h1>
+  <p class="cortina__texto">Promos, menú, redes y hora, rotando solos para la pantalla del local.</p>
+  <button class="cortina__btn" id="btn-iniciar" type="button">▶ Iniciar en pantalla completa</button>
+  <p class="cortina__nota">También con la tecla F · Esc para salir</p>
+  <a class="cortina__volver" href="index.html">← Volver a la página</a>
+</div>
 
 </body>
 </html>
