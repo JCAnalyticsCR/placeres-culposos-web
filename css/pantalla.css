@@ -194,16 +194,17 @@ body.tv--vertical .tv__lado {
   order: -1; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; gap: 1.5vh 3vw;
   padding: 2vh 4vw; border-left: 0; border-bottom: .6vh solid var(--amarillo);
 }
-body.tv--vertical .reloj { grid-row: 1 / 3; }
-body.tv--vertical .reloj__fecha { padding-right: 0; }
-body.tv--vertical .reloj__hora { font-size: 8vh; }
+body.tv--vertical .reloj { grid-row: 1 / 3; min-width: 0; }
+body.tv--vertical .reloj__fecha { padding-right: 0; white-space: normal; max-width: 34vw; }
+body.tv--vertical .reloj__hora { font-size: 7vh; }
 body.tv--vertical .reloj__sufijo { font-size: 2.8vh; }
 body.tv--vertical .reloj__fecha { font-size: 1.9vh; }
 body.tv--vertical .redes-tv { display: none; }
-body.tv--vertical .estado { justify-self: end; font-size: 1.6vh; padding: 1.2vh 1.6vw; white-space: nowrap; max-width: 100%; }
-body.tv--vertical .qr { justify-self: end; padding: 1vh; gap: 1.5vw; max-width: 100%; }
+body.tv--vertical .estado { justify-self: end; font-size: 1.5vh; padding: 1.1vh 1.4vw; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+body.tv--vertical .qr { justify-self: end; padding: 1vh; gap: 1.5vw; max-width: 100%; min-width: 0; }
+body.tv--vertical .qr > div { min-width: 0; }
 body.tv--vertical .qr img { width: 9vh; height: 9vh; }
-body.tv--vertical .qr b { font-size: 2vh; white-space: nowrap; }
+body.tv--vertical .qr b { font-size: 2vh; white-space: normal; line-height: 1.05; }
 body.tv--vertical .qr span { display: none; }
 body.tv--vertical .menu-tv__media { min-height: 48%; }
 body.tv--vertical .menu-tv__desc { display: none; }
@@ -223,4 +224,21 @@ body.tv--vertical .promo-card__name { font-size: 7vh; }
 @media (prefers-reduced-motion: reduce) {
   .slide, .redes-tv__marco img { transition-duration: .01ms; }
   .cinta__track, .panda-tv, .estado__punto { animation: none; }
+}
+
+/* Pantallas chicas (teléfono/tablet, para previsualizar): todo un poco más
+   compacto y con la franja más baja. */
+@media (max-width: 700px) {
+  body.tv--vertical { grid-template-rows: 20vh minmax(0, 1fr) var(--cinta); }
+  body.tv--vertical .reloj__hora { font-size: 6vh; }
+  body.tv--vertical .qr img { width: 8vh; height: 8vh; }
+  body.tv--vertical .menu-tv { gap: 3vw; }
+  body.tv--vertical .menu-tv__name { font-size: 2.4vh; }
+  body.tv--vertical .slide--menu .display { font-size: 5.5vh; }
+  body.tv--vertical .promo-card__big { font-size: 18vh; }
+  body.tv--vertical .promo-card__name { font-size: 5.5vh; }
+  body.tv--vertical .slide--star .display { font-size: 8vh; }
+  body.tv--vertical .slide--redes .display { font-size: 8vh; }
+  body.tv--vertical .slide--redes .qr-big img { width: 30vh; height: 30vh; }
+  .cinta__track span { font-size: 2.6vh; }
 }

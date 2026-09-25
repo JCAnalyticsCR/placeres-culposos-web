@@ -136,7 +136,7 @@ Parámetros en la URL:
 
 | Parámetro | Efecto |
 |---|---|
-| `?v=1` | Versión vertical (franja arriba), para una TV de pie |
+| `?v=1` / `?h=1` | Fuerzan vertical u horizontal. Sin parámetro se amolda sola a la pantalla (vertical si es más alta que ancha: TV de pie, tablet o teléfono) |
 | `?seg=12` | Segundos por diapositiva (por defecto 9) |
 | `?sinboton` | Oculta el botón de pantalla completa (modo kiosco) |
 

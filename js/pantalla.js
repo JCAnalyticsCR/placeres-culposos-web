@@ -2,7 +2,7 @@
    rota sola. Reloj y fecha en vivo, foto de redes que cambia, estado
    abierto/cerrado según el horario, pantalla completa con un toque o F.
    Parámetros en la URL:
-     ?v=1        vertical (franja arriba)
+     ?v=1 / ?h=1 fuerzan vertical u horizontal (por defecto, según la pantalla)
      ?seg=10     segundos por diapositiva (por defecto 9)
      ?sinboton   oculta el botón de pantalla completa (para el kiosco) */
 
@@ -13,7 +13,15 @@ const SEG = Math.max(4, Number(params.get('seg')) || 9);
 // PENDIENTE: horario real del cliente (marcador del diseño: 13:00 a 21:00).
 const HORARIO = { abre: 13, cierra: 21 };
 
-if (params.has('v')) document.body.classList.add('tv--vertical');
+// Se amolda al dispositivo: vertical si la pantalla es más alta que ancha
+// (TV de pie, tablet o teléfono en vertical). ?v=1 / ?h=1 lo fuerzan.
+const orientacion = window.matchMedia('(orientation: portrait)');
+function amoldar() {
+  const vertical = params.has('v') || (!params.has('h') && orientacion.matches);
+  document.body.classList.toggle('tv--vertical', vertical);
+}
+amoldar();
+orientacion.addEventListener('change', amoldar);
 if (params.has('sinboton')) document.body.classList.add('tv--sin-boton');
 
 const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
